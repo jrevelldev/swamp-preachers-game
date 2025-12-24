@@ -279,7 +279,7 @@ namespace SwampPreachers
 			if (!isDashing && !m_hasDashedInAir && m_dashCooldown <= 0f)
 			{
 				// dash input (left shift)
-				if (enableDash && !m_wallGrabbing && InputSystem.Dash())
+				if (enableDash && !isCrouching && !m_wallGrabbing && InputSystem.Dash())
 				{
 					isDashing = true;
 					// dash effect
@@ -295,7 +295,7 @@ namespace SwampPreachers
 			m_dashCooldown -= Time.deltaTime;
 
 			// Attack Input
-			if (enableAttack && !m_wallGrabbing && InputSystem.Attack())
+			if (enableAttack && !isCrouching && !m_wallGrabbing && InputSystem.Attack())
 			{
 				// Check for air attack capability
 				if (enableAirAttack || isGrounded)
@@ -315,7 +315,7 @@ namespace SwampPreachers
 				m_hasDashedInAir = false;
 			
 			// Jumping
-			if (enableJump && InputSystem.Jump())
+			if (enableJump && !isCrouching && InputSystem.Jump())
 			{
 				m_jumpBufferCounter = jumpBufferTime;
 			}
