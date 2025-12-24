@@ -83,7 +83,7 @@ namespace SwampPreachers
 		private BoxCollider2D m_collider;
 		private Vector2 m_originalColliderSize;
 		private Vector2 m_originalColliderOffset;
-		private bool m_isCrouching = false;
+		[HideInInspector] public bool isCrouching = false;
 		
 		// 0 -> none, 1 -> right, -1 -> left
 		private int m_onWallSide = 0;
@@ -136,21 +136,21 @@ namespace SwampPreachers
 				// crouching logic
 				if (enableCrouch && InputSystem.Crouch() && isGrounded)
 				{
-					if (!m_isCrouching)
+					if (!isCrouching)
 					{
-						m_isCrouching = true;
+						isCrouching = true;
 						m_collider.size = new Vector2(m_originalColliderSize.x, m_originalColliderSize.y / 2f);
 						m_collider.offset = new Vector2(m_originalColliderOffset.x, m_originalColliderOffset.y - (m_originalColliderSize.y / 4f));
 					}
 					moveInput /= crouchSpeedDivisor;
 				}
-				else if (m_isCrouching) // attempt to stand up
+				else if (isCrouching) // attempt to stand up
 				{
 					// simple check: can strictly only stand up if not holding crouch. 
 					// Ideally we check overhead, but for now just revert.
 					if(!InputSystem.Crouch())
 					{
-						m_isCrouching = false;
+						isCrouching = false;
 						m_collider.size = m_originalColliderSize;
 						m_collider.offset = m_originalColliderOffset;
 					}
@@ -161,7 +161,7 @@ namespace SwampPreachers
 						// logic here: if button held, stay crouched. if released, stand up.
 						// The if condition above handles "entering" crouch only on ground.
 						// This else-if handles "staying" crouched or standing up.
-						// If user holds crouch in air, m_isCrouching remains true if it was already true.
+						// If user holds crouch in air, isCrouching remains true if it was already true.
 						moveInput /= crouchSpeedDivisor;
 					}
 				}

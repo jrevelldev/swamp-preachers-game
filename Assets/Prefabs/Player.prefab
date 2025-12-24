@@ -195,7 +195,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.023967922, y: -0.1989795}
+  m_Offset: {x: 0, y: -0.12}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -205,7 +205,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.6879358, y: 1.7405422}
+  m_Size: {x: 0.76, y: 1.75}
   m_EdgeRadius: 0
 --- !u!50 &1865938915375051439
 Rigidbody2D:
@@ -251,7 +251,8 @@ MonoBehaviour:
   enableDash: 1
   enableCrouch: 1
   enableAttack: 1
-  speed: 6
+  enableAirAttack: 0
+  speed: 7
   crouchSpeedDivisor: 2
   jumpForce: 15
   fallMultiplier: 1.2
@@ -274,6 +275,8 @@ MonoBehaviour:
   whatIsWall:
     serializedVersion: 2
     m_Bits: 128
+  attackSpeedDivisor: 2
+  attackSlowdownDuration: 0.4
   isGrounded: 0
   moveInput: 0
   canMove: 1
@@ -287,6 +290,7 @@ MonoBehaviour:
   slideSpeed: 2.5
   wallJumpForce: {x: 10.5, y: 18}
   wallClimbForce: {x: 4, y: 14}
+  isCrouching: 0
 --- !u!114 &1173712999407116002
 MonoBehaviour:
   m_ObjectHideFlags: 0
