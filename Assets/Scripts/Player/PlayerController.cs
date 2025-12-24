@@ -150,9 +150,16 @@ namespace SwampPreachers
 					// Ideally we check overhead, but for now just revert.
 					if(!InputSystem.Crouch())
 					{
-						isCrouching = false;
-						m_collider.size = m_originalColliderSize;
-						m_collider.offset = m_originalColliderOffset;
+						if (CanStand())
+						{
+							isCrouching = false;
+							m_collider.size = m_originalColliderSize;
+							m_collider.offset = m_originalColliderOffset;
+						}
+						else
+						{
+							moveInput /= crouchSpeedDivisor;
+						}
 					}
 					else
 					{
@@ -199,6 +206,7 @@ namespace SwampPreachers
 					Flip();
 				else if (m_facingRight && moveInput < 0f)
 					Flip();
+
 
 				// Dashing logic
 				if (isDashing)
@@ -375,6 +383,15 @@ namespace SwampPreachers
 				m_playerSide = 1;
 			else
 				m_playerSide = -1;
+		}
+
+		private bool CanStand()
+		{
+			// Check if we can maximize the collider size
+			Vector2 center = (Vector2)transform.position + m_originalColliderOffset + new Vector2(0f, m_originalColliderSize.y / 4f);
+			Vector2 size = new Vector2(m_originalColliderSize.x, m_originalColliderSize.y / 2f);
+			size *= 0.9f;
+			return !Physics2D.OverlapBox(center, size, 0f, whatIsGround | whatIsWall);
 		}
 
 		private void OnDrawGizmosSelected()
