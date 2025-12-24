@@ -52,5 +52,12 @@ namespace SwampPreachers
 			bool gamepadAttack = UnityEngine.InputSystem.Gamepad.current != null && UnityEngine.InputSystem.Gamepad.current.buttonWest.wasPressedThisFrame;
 			return mouseAttack || keyboardAttack || gamepadAttack;
 		}
+
+		public static bool Crouch()
+		{
+			bool keyboardCrouch = UnityEngine.InputSystem.Keyboard.current != null && (UnityEngine.InputSystem.Keyboard.current.sKey.isPressed || UnityEngine.InputSystem.Keyboard.current.downArrowKey.isPressed);
+			bool gamepadCrouch = UnityEngine.InputSystem.Gamepad.current != null && (UnityEngine.InputSystem.Gamepad.current.leftStick.y.ReadValue() < -0.5f || UnityEngine.InputSystem.Gamepad.current.dpad.down.isPressed);
+			return keyboardCrouch || gamepadCrouch;
+		}
 	}
 }

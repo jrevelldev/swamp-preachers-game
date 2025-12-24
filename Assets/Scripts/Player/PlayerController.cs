@@ -4,19 +4,26 @@ namespace SwampPreachers
 {
 	public class PlayerController : MonoBehaviour
 	{
+		[Header("Capabilities")]
+		[SerializeField] private bool enableJump = true;
+		[SerializeField] private bool enableDoubleJump = false;
+		[SerializeField] private bool enableDash = true;
+		[SerializeField] private bool enableCrouch = true;
+		[SerializeField] private bool enableAttack = true;
+
+		[Header("Movement")]
 		[SerializeField] private float speed;
+		[SerializeField] private float crouchSpeedDivisor = 2f;
+
 		[Header("Jumping")]
 		[SerializeField] private float jumpForce;
 		[SerializeField] private float fallMultiplier;
 		[SerializeField] private float lowJumpMultiplier = 2f;
 		[SerializeField] private float jumpBufferTime = 0.1f;
 		[SerializeField] private float coyoteTime = 0.25f;
-		[SerializeField] private Transform groundCheck;
-		[SerializeField] private float groundCheckRadius;
-		[SerializeField] private LayerMask whatIsGround;
 		[SerializeField] private int extraJumpCount = 1;
-		[SerializeField] private bool enableDoubleJump = true;
 		[SerializeField] private GameObject jumpEffect;
+
 		[Header("Dashing")]
 		[SerializeField] private float dashSpeed = 30f;
 		[Tooltip("Amount of time (in seconds) the player will be in the dashing speed")]
@@ -24,6 +31,12 @@ namespace SwampPreachers
 		[Tooltip("Time (in seconds) between dashes")]
 		[SerializeField] private float dashCooldown = 0.2f;
 		[SerializeField] private GameObject dashEffect;
+
+		[Header("Ground Detection")]
+		[SerializeField] private Transform groundCheck;
+		[SerializeField] private float groundCheckRadius;
+		[SerializeField] private LayerMask whatIsGround;
+		[SerializeField] private LayerMask whatIsWall;
 
 		// Access needed for handling animation in Player script and other uses
 		[HideInInspector] public bool isGrounded;
@@ -61,7 +74,11 @@ namespace SwampPreachers
 		private bool m_wallJumping = false;
 		private float m_dashCooldown;
 		private float m_jumpBufferCounter;
-
+		private BoxCollider2D m_collider;
+		private Vector2 m_originalColliderSize;
+		private Vector2 m_originalColliderOffset;
+		private bool m_isCrouching = false;
+		
 		// 0 -> none, 1 -> right, -1 -> left
 		private int m_onWallSide = 0;
 		private int m_playerSide = 1;
@@ -83,6 +100,9 @@ namespace SwampPreachers
 			m_extraJumpForce = jumpForce * 0.7f;
 
 			m_rb = GetComponent<Rigidbody2D>();
+			m_collider = GetComponent<BoxCollider2D>();
+			m_originalColliderSize = m_collider.size;
+			m_originalColliderOffset = m_collider.offset;
 			m_dustParticle = GetComponentInChildren<ParticleSystem>();
 		}
 
@@ -92,10 +112,10 @@ namespace SwampPreachers
 			isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
 			var position = transform.position;
 			// check if on wall
-			m_onWall = Physics2D.OverlapCircle((Vector2)position + grabRightOffset, grabCheckRadius, whatIsGround)
-			          || Physics2D.OverlapCircle((Vector2)position + grabLeftOffset, grabCheckRadius, whatIsGround);
-			m_onRightWall = Physics2D.OverlapCircle((Vector2)position + grabRightOffset, grabCheckRadius, whatIsGround);
-			m_onLeftWall = Physics2D.OverlapCircle((Vector2)position + grabLeftOffset, grabCheckRadius, whatIsGround);
+			m_onWall = Physics2D.OverlapCircle((Vector2)position + grabRightOffset, grabCheckRadius, whatIsWall)
+			          || Physics2D.OverlapCircle((Vector2)position + grabLeftOffset, grabCheckRadius, whatIsWall);
+			m_onRightWall = Physics2D.OverlapCircle((Vector2)position + grabRightOffset, grabCheckRadius, whatIsWall);
+			m_onLeftWall = Physics2D.OverlapCircle((Vector2)position + grabLeftOffset, grabCheckRadius, whatIsWall);
 
 			// calculate player and wall sides as integers
 			CalculateSides();
@@ -107,6 +127,39 @@ namespace SwampPreachers
 			// if this instance is currently playable
 			if (isCurrentlyPlayable)
 			{
+				// crouching logic
+				if (enableCrouch && InputSystem.Crouch() && isGrounded)
+				{
+					if (!m_isCrouching)
+					{
+						m_isCrouching = true;
+						m_collider.size = new Vector2(m_originalColliderSize.x, m_originalColliderSize.y / 2f);
+						m_collider.offset = new Vector2(m_originalColliderOffset.x, m_originalColliderOffset.y - (m_originalColliderSize.y / 4f));
+					}
+					moveInput /= crouchSpeedDivisor;
+				}
+				else if (m_isCrouching) // attempt to stand up
+				{
+					// simple check: can strictly only stand up if not holding crouch. 
+					// Ideally we check overhead, but for now just revert.
+					if(!InputSystem.Crouch())
+					{
+						m_isCrouching = false;
+						m_collider.size = m_originalColliderSize;
+						m_collider.offset = m_originalColliderOffset;
+					}
+					else
+					{
+						// if still holding crouch button but in air, maybe stay crouched? 
+						// Current requirement was just "crouching system". 
+						// logic here: if button held, stay crouched. if released, stand up.
+						// The if condition above handles "entering" crouch only on ground.
+						// This else-if handles "staying" crouched or standing up.
+						// If user holds crouch in air, m_isCrouching remains true if it was already true.
+						moveInput /= crouchSpeedDivisor;
+					}
+				}
+
 				// horizontal movement
 				if(m_wallJumping)
 				{
@@ -206,7 +259,7 @@ namespace SwampPreachers
 			if (!isDashing && !m_hasDashedInAir && m_dashCooldown <= 0f)
 			{
 				// dash input (left shift)
-				if (InputSystem.Dash())
+				if (enableDash && InputSystem.Dash())
 				{
 					isDashing = true;
 					// dash effect
@@ -222,7 +275,7 @@ namespace SwampPreachers
 			m_dashCooldown -= Time.deltaTime;
 
 			// Attack Input
-			if (InputSystem.Attack())
+			if (enableAttack && InputSystem.Attack())
 			{
 				isAttacking = true;
 			}
@@ -236,7 +289,7 @@ namespace SwampPreachers
 				m_hasDashedInAir = false;
 			
 			// Jumping
-			if (InputSystem.Jump())
+			if (enableJump && InputSystem.Jump())
 			{
 				m_jumpBufferCounter = jumpBufferTime;
 			}
