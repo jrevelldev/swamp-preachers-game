@@ -13,7 +13,7 @@ TagManager:
   - Water
   - UI
   - 
-  - Wall
+  - WallGrab
   - Ground
   - Enemy
   - Player
@@ -42,8 +42,32 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: New Layer
+  - name: Parallax Far
     uniqueID: 1802038029
+    locked: 0
+  - name: Parallax Mid
+    uniqueID: 3045390435
+    locked: 0
+  - name: Background
+    uniqueID: 736877619
+    locked: 0
+  - name: 'Gameplay Under '
+    uniqueID: 3882689621
+    locked: 0
+  - name: Gameplay Over
+    uniqueID: 3343950611
+    locked: 0
+  - name: Characters
+    uniqueID: 4142942869
+    locked: 0
+  - name: Foreground
+    uniqueID: 4070542359
+    locked: 0
+  - name: VFX
+    uniqueID: 538155737
+    locked: 0
+  - name: UI
+    uniqueID: 2069231119
     locked: 0
   m_RenderingLayers:
   - Default

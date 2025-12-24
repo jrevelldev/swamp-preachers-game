@@ -10,6 +10,7 @@ namespace SwampPreachers
 		[SerializeField] private bool enableDash = true;
 		[SerializeField] private bool enableCrouch = true;
 		[SerializeField] private bool enableAttack = true;
+		[SerializeField] private bool enableAirAttack = false;
 
 		[Header("Movement")]
 		[SerializeField] private float speed;
@@ -37,6 +38,10 @@ namespace SwampPreachers
 		[SerializeField] private float groundCheckRadius;
 		[SerializeField] private LayerMask whatIsGround;
 		[SerializeField] private LayerMask whatIsWall;
+
+		[Header("Combat")]
+		[SerializeField] private float attackSpeedDivisor = 2f;
+		[SerializeField] private float attackSlowdownDuration = 0.4f;
 
 		// Access needed for handling animation in Player script and other uses
 		[HideInInspector] public bool isGrounded;
@@ -73,6 +78,7 @@ namespace SwampPreachers
 		private float m_wallStick = 0f;
 		private bool m_wallJumping = false;
 		private float m_dashCooldown;
+		private float m_attackSlowdownTimer;
 		private float m_jumpBufferCounter;
 		private BoxCollider2D m_collider;
 		private Vector2 m_originalColliderSize;
@@ -158,6 +164,12 @@ namespace SwampPreachers
 						// If user holds crouch in air, m_isCrouching remains true if it was already true.
 						moveInput /= crouchSpeedDivisor;
 					}
+				}
+
+				// Attack Slowdown
+				if (m_attackSlowdownTimer > 0f)
+				{
+					moveInput /= attackSpeedDivisor;
 				}
 
 				// horizontal movement
@@ -259,7 +271,7 @@ namespace SwampPreachers
 			if (!isDashing && !m_hasDashedInAir && m_dashCooldown <= 0f)
 			{
 				// dash input (left shift)
-				if (enableDash && InputSystem.Dash())
+				if (enableDash && !m_wallGrabbing && InputSystem.Dash())
 				{
 					isDashing = true;
 					// dash effect
@@ -275,13 +287,19 @@ namespace SwampPreachers
 			m_dashCooldown -= Time.deltaTime;
 
 			// Attack Input
-			if (enableAttack && InputSystem.Attack())
+			if (enableAttack && !m_wallGrabbing && InputSystem.Attack())
 			{
-				isAttacking = true;
+				// Check for air attack capability
+				if (enableAirAttack || isGrounded)
+				{
+					isAttacking = true;
+					m_attackSlowdownTimer = attackSlowdownDuration;
+				}
 			}
 			else
 			{
 				isAttacking = false;
+				m_attackSlowdownTimer -= Time.deltaTime;
 			}
 			
 			// if has dashed in air once but now grounded
