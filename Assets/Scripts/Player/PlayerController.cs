@@ -5,12 +5,12 @@ namespace SwampPreachers
 	public class PlayerController : MonoBehaviour
 	{
 		[Header("Capabilities")]
-		[SerializeField] private bool enableJump = true;
-		[SerializeField] private bool enableDoubleJump = false;
-		[SerializeField] private bool enableDash = true;
-		[SerializeField] private bool enableCrouch = true;
-		[SerializeField] private bool enableAttack = true;
-		[SerializeField] private bool enableAirAttack = false;
+		[SerializeField] public bool enableJump = true;
+		[SerializeField] public bool enableDoubleJump = false;
+		[SerializeField] public bool enableDash = true;
+		[SerializeField] public bool enableCrouch = true;
+		[SerializeField] public bool enableAttack = true;
+		[SerializeField] public bool enableAirAttack = false;
 
 		[Header("Movement")]
 		[SerializeField] private float speed;
