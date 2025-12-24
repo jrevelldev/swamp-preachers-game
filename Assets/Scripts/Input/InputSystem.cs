@@ -5,10 +5,7 @@ namespace SwampPreachers
 	public class InputSystem : MonoBehaviour
 	{
 		// input string caching
-		static readonly string HorizontalInput = "Horizontal";
-		static readonly string JumpInput = "Jump";
-		static readonly string DashInput = "Dash";
-
+		
 		public static float HorizontalRaw()
 		{
 			float input = 0f;
