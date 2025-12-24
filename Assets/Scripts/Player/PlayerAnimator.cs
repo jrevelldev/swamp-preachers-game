@@ -12,6 +12,7 @@ namespace SwampPreachers
 		private static readonly int IsJumping = Animator.StringToHash("IsJumping");
 		private static readonly int WallGrabbing = Animator.StringToHash("WallGrabbing");
 		private static readonly int IsDashing = Animator.StringToHash("IsDashing");
+		private static readonly int Melee = Animator.StringToHash("Melee");
 
 		private void Start()
 		{
@@ -49,6 +50,12 @@ namespace SwampPreachers
 
 			// dash animation
 			m_anim.SetBool(IsDashing, m_controller.isDashing);
+
+			// attack animation
+			if(m_controller.isAttacking)
+			{
+				m_anim.SetTrigger(Melee);
+			}
 		}
 	}
 }

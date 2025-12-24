@@ -8,10 +8,14 @@ namespace SwampPreachers
 		[Header("Jumping")]
 		[SerializeField] private float jumpForce;
 		[SerializeField] private float fallMultiplier;
+		[SerializeField] private float lowJumpMultiplier = 2f;
+		[SerializeField] private float jumpBufferTime = 0.1f;
+		[SerializeField] private float coyoteTime = 0.25f;
 		[SerializeField] private Transform groundCheck;
 		[SerializeField] private float groundCheckRadius;
 		[SerializeField] private LayerMask whatIsGround;
 		[SerializeField] private int extraJumpCount = 1;
+		[SerializeField] private bool enableDoubleJump = true;
 		[SerializeField] private GameObject jumpEffect;
 		[Header("Dashing")]
 		[SerializeField] private float dashSpeed = 30f;
@@ -26,6 +30,7 @@ namespace SwampPreachers
 		[HideInInspector] public float moveInput;
 		[HideInInspector] public bool canMove = true;
 		[HideInInspector] public bool isDashing = false;
+		[HideInInspector] public bool isAttacking = false;
 		[HideInInspector] public bool actuallyWallGrabbing = false;
 		// controls whether this instance is currently playable or not
 		[HideInInspector] public bool isCurrentlyPlayable = false;
@@ -42,7 +47,6 @@ namespace SwampPreachers
 		private Rigidbody2D m_rb;
 		private ParticleSystem m_dustParticle;
 		private bool m_facingRight = true;
-		private readonly float m_groundedRememberTime = 0.25f;
 		private float m_groundedRemember = 0f;
 		private int m_extraJumps;
 		private float m_extraJumpForce;
@@ -56,6 +60,7 @@ namespace SwampPreachers
 		private float m_wallStick = 0f;
 		private bool m_wallJumping = false;
 		private float m_dashCooldown;
+		private float m_jumpBufferCounter;
 
 		// 0 -> none, 1 -> right, -1 -> left
 		private int m_onWallSide = 0;
@@ -118,6 +123,10 @@ namespace SwampPreachers
 				if (m_rb.linearVelocity.y < 0f)
 				{
 					m_rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+				}
+				else if (m_rb.linearVelocity.y > 0f && !InputSystem.JumpHeld())
+				{
+					m_rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
 				}
 
 				// Flipping
@@ -190,7 +199,7 @@ namespace SwampPreachers
 			// grounded remember offset (for more responsive jump)
 			m_groundedRemember -= Time.deltaTime;
 			if (isGrounded)
-				m_groundedRemember = m_groundedRememberTime;
+				m_groundedRemember = coyoteTime;
 
 			if (!isCurrentlyPlayable) return;
 			// if not currently dashing and hasn't already dashed in air once
@@ -211,38 +220,61 @@ namespace SwampPreachers
 				}
 			}
 			m_dashCooldown -= Time.deltaTime;
+
+			// Attack Input
+			if (InputSystem.Attack())
+			{
+				isAttacking = true;
+			}
+			else
+			{
+				isAttacking = false;
+			}
 			
 			// if has dashed in air once but now grounded
 			if (m_hasDashedInAir && isGrounded)
 				m_hasDashedInAir = false;
 			
 			// Jumping
-			if(InputSystem.Jump() && m_extraJumps > 0 && !isGrounded && !m_wallGrabbing)	// extra jumping
+			if (InputSystem.Jump())
+			{
+				m_jumpBufferCounter = jumpBufferTime;
+			}
+			else
+			{
+				m_jumpBufferCounter -= Time.deltaTime;
+			}
+
+			if(m_jumpBufferCounter > 0f && m_extraJumps > 0 && !isGrounded && !m_wallGrabbing && enableDoubleJump)	// extra jumping
 			{
 				m_rb.linearVelocity = new Vector2(m_rb.linearVelocity.x, m_extraJumpForce); ;
 				m_extraJumps--;
+				m_jumpBufferCounter = 0f;
 				// jumpEffect
 				PoolManager.instance.ReuseObject(jumpEffect, groundCheck.position, Quaternion.identity);
 			}
-			else if(InputSystem.Jump() && (isGrounded || m_groundedRemember > 0f))	// normal single jumping
+			else if(m_jumpBufferCounter > 0f && (isGrounded || m_groundedRemember > 0f))	// normal single jumping
 			{
 				m_rb.linearVelocity = new Vector2(m_rb.linearVelocity.x, jumpForce);
+				m_jumpBufferCounter = 0f;
 				// jumpEffect
 				PoolManager.instance.ReuseObject(jumpEffect, groundCheck.position, Quaternion.identity);
 			}
-			else if(InputSystem.Jump() && m_wallGrabbing && moveInput!=m_onWallSide )		// wall jumping off the wall
+			else if(m_jumpBufferCounter > 0f && m_wallGrabbing && moveInput!=m_onWallSide )		// wall jumping off the wall
 			{
 				m_wallGrabbing = false;
 				m_wallJumping = true;
+				m_jumpBufferCounter = 0f;
 				Debug.Log("Wall jumped");
 				if (m_playerSide == m_onWallSide)
 					Flip();
 				m_rb.AddForce(new Vector2(-m_onWallSide * wallJumpForce.x, wallJumpForce.y), ForceMode2D.Impulse);
 			}
-			else if(InputSystem.Jump() && m_wallGrabbing && moveInput != 0 && (moveInput == m_onWallSide))      // wall climbing jump
+			else if(m_jumpBufferCounter > 0f && m_wallGrabbing && moveInput != 0 && (moveInput == m_onWallSide))      // wall climbing jump
 			{
 				m_wallGrabbing = false;
 				m_wallJumping = true;
+				m_jumpBufferCounter = 0f;
 				Debug.Log("Wall climbed");
 				if (m_playerSide == m_onWallSide)
 					Flip();
