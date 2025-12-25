@@ -43,6 +43,13 @@ namespace SwampPreachers
 		[SerializeField] private float attackSpeedDivisor = 2f;
 		[SerializeField] private float attackSlowdownDuration = 0.4f;
 
+		[Header("Combat Reaction")]
+		[SerializeField] private Vector2 knockbackForce = new Vector2(10f, 10f);
+		[SerializeField] private float hurtDuration = 0.5f;
+		
+		private float m_hurtTimer;
+		[HideInInspector] public bool isHurt = false;
+
 		// Access needed for handling animation in Player script and other uses
 		[HideInInspector] public bool isGrounded;
 		[HideInInspector] public float moveInput;
@@ -84,6 +91,7 @@ namespace SwampPreachers
 		private Vector2 m_originalColliderSize;
 		private Vector2 m_originalColliderOffset;
 		[HideInInspector] public bool isCrouching = false;
+		private SpriteRenderer m_spriteRenderer;
 		
 		// 0 -> none, 1 -> right, -1 -> left
 		private int m_onWallSide = 0;
@@ -110,6 +118,16 @@ namespace SwampPreachers
 			m_originalColliderSize = m_collider.size;
 			m_originalColliderOffset = m_collider.offset;
 			m_dustParticle = GetComponentInChildren<ParticleSystem>();
+			m_spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+			
+			// Auto-setup shader if possible
+			// Assuming the user didn't assign a material manually, we might want to ensure we can flash.
+			// But for now, we rely on the shader property being present or we swap shader.
+			// Ideally, we just find the shader.
+			if (m_spriteRenderer != null)
+			{
+				m_spriteRenderer.material.shader = Shader.Find("SwampPreachers/SpriteFlash");
+			}
 		}
 
 		private void FixedUpdate()
@@ -133,6 +151,14 @@ namespace SwampPreachers
 			// if this instance is currently playable
 			if (isCurrentlyPlayable)
 			{
+				if (isHurt)
+				{
+					// simple friction or air drag while hurt? 
+					// for now just let physics handle the knockback force
+					// maybe slow down x slightly if needed, but linear drag on RB is usually better.
+					return;
+				}
+
 				// crouching logic
 				if (enableCrouch && InputSystem.Crouch() && isGrounded)
 				{
@@ -146,9 +172,14 @@ namespace SwampPreachers
 				}
 				else if (isCrouching) // attempt to stand up
 				{
+					// Stay crouched if hurt (forced crouch from overhead hit)
+					if (isHurt)
+					{
+						moveInput /= crouchSpeedDivisor;
+					}
 					// simple check: can strictly only stand up if not holding crouch. 
 					// Ideally we check overhead, but for now just revert.
-					if(!InputSystem.Crouch())
+					else if(!InputSystem.Crouch())
 					{
 						if (CanStand())
 						{
@@ -261,12 +292,17 @@ namespace SwampPreachers
 
 		private void Update()
 		{
+			CheckDebugHurt();
+			
 			// horizontal input
 			moveInput = InputSystem.HorizontalRaw();
 
 			if (isGrounded)
 			{
 				m_extraJumps = extraJumpCount;
+				isHurt = false; // Recovery on ground touch? Or just timer? Plan said timer.
+				// Actually, common platformer trope: you regain control after time OR when hitting ground if time passed.
+				// For now let's stick STRICTLY to timer to avoid instant recovery if you get hit into ground.
 			}
 
 			// grounded remember offset (for more responsive jump)
@@ -275,6 +311,16 @@ namespace SwampPreachers
 				m_groundedRemember = coyoteTime;
 
 			if (!isCurrentlyPlayable) return;
+
+			if (isHurt)
+			{
+				m_hurtTimer -= Time.deltaTime;
+				if (m_hurtTimer <= 0f)
+					isHurt = false;
+				else
+					return; // disable input
+			}
+
 			// if not currently dashing and hasn't already dashed in air once
 			if (!isDashing && !m_hasDashedInAir && m_dashCooldown <= 0f)
 			{
@@ -370,6 +416,74 @@ namespace SwampPreachers
 			transform.localScale = scale;
 		}
 
+		public void TakeDamage(Vector2 sourcePosition)
+		{
+			if (isHurt) return;
+
+			isHurt = true;
+			m_hurtTimer = hurtDuration;
+			
+			m_hurtTimer = hurtDuration;
+			
+			// Face the source (Face TOWARDS the source)
+			if (sourcePosition.x > transform.position.x && !m_facingRight)
+				Flip();
+			else if (sourcePosition.x < transform.position.x && m_facingRight)
+				Flip();
+			
+			// Visual Flash
+			if (m_spriteRenderer != null)
+				StartCoroutine(FlashRoutine());
+
+			// Zero out velocity before knockback
+			m_rb.linearVelocity = Vector2.zero;
+			
+			// Calculate Knockback direction
+			// Default: Away and Up
+			int dir = sourcePosition.x > transform.position.x ? -1 : 1;
+			Vector2 force = new Vector2(dir * knockbackForce.x, knockbackForce.y);
+
+			// Vertical Checks
+			float yDiff = sourcePosition.y - transform.position.y;
+			if (yDiff > 1.0f) // Hit from above ~roughly
+			{
+				// Force crouch if enabled
+				if (enableCrouch)
+				{
+					isCrouching = true;
+					m_collider.size = new Vector2(m_originalColliderSize.x, m_originalColliderSize.y / 2f);
+					m_collider.offset = new Vector2(m_originalColliderOffset.x, m_originalColliderOffset.y - (m_originalColliderSize.y / 4f));
+				}
+				// Knockback slightly down or just Horizontal? 
+				// "bounce slightly up and in the other direction" was for UNDERNEATH.
+				// "crouch sprites and also react in a direction" for ABOVE.
+				// FIX: Don't push down, it increases friction. Use 1f (small hop) or 0f.
+				force = new Vector2(dir * knockbackForce.x, 1f); 
+			}
+			else if (yDiff < -1.0f) // Hit from below
+			{
+				// "bounce slightly up"
+				force = new Vector2(dir * knockbackForce.x, knockbackForce.y * 1.5f);
+			}
+
+			m_rb.AddForce(force, ForceMode2D.Impulse);
+		}
+
+		// Debug Inputs
+		private void CheckDebugHurt()
+		{
+			if (UnityEngine.InputSystem.Keyboard.current == null) return;
+			
+			if (UnityEngine.InputSystem.Keyboard.current.hKey.wasPressedThisFrame)
+				TakeDamage((Vector2)transform.position + Vector2.left); // Hit from left
+			if (UnityEngine.InputSystem.Keyboard.current.jKey.wasPressedThisFrame)
+				TakeDamage((Vector2)transform.position + Vector2.right); // Hit from right
+			if (UnityEngine.InputSystem.Keyboard.current.uKey.wasPressedThisFrame)
+				TakeDamage((Vector2)transform.position + Vector2.up * 2f); // Hit from above
+			if (UnityEngine.InputSystem.Keyboard.current.nKey.wasPressedThisFrame)
+				TakeDamage((Vector2)transform.position + Vector2.down * 2f); // Hit from below
+		}
+
 		void CalculateSides()
 		{
 			if (m_onRightWall)
@@ -392,6 +506,23 @@ namespace SwampPreachers
 			Vector2 size = new Vector2(m_originalColliderSize.x, m_originalColliderSize.y / 2f);
 			size *= 0.9f;
 			return !Physics2D.OverlapBox(center, size, 0f, whatIsGround | whatIsWall);
+		}
+		
+		private System.Collections.IEnumerator FlashRoutine()
+		{
+			// With Shader "SwampPreachers/SpriteFlash" check "swamp-preachers-game\Assets\Shaders\SpriteFlash.shader"
+			// Property is _FlashAmount
+			
+			float elapsed = 0f;
+			while (elapsed < hurtDuration)
+			{
+				m_spriteRenderer.material.SetFloat("_FlashAmount", 1f);
+				yield return new WaitForSeconds(0.1f);
+				m_spriteRenderer.material.SetFloat("_FlashAmount", 0f);
+				yield return new WaitForSeconds(0.1f);
+				elapsed += 0.2f;
+			}
+			m_spriteRenderer.material.SetFloat("_FlashAmount", 0f);
 		}
 
 		private void OnDrawGizmosSelected()
