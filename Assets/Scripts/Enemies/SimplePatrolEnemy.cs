@@ -11,6 +11,23 @@ namespace SwampPreachers.Enemies
 		[SerializeField] private float speed = 2f;
 		[SerializeField] private float waitTime = 1f;
 
+		private enum MovementType
+		{
+			Ground,
+			Flying
+		}
+
+		private enum PathType
+		{
+			Linear,
+			SineWave
+		}
+
+		[SerializeField] private MovementType movementType = MovementType.Ground;
+		[SerializeField] private PathType pathType = PathType.Linear;
+		[SerializeField] private float sineFrequency = 2f;
+		[SerializeField] private float sineAmplitude = 2f;
+
 		private int m_currentPointIndex;
 		private float m_waitTimer;
 		private bool m_isWaiting;
@@ -19,6 +36,12 @@ namespace SwampPreachers.Enemies
 		private void Start()
 		{
 			m_rb = GetComponent<Rigidbody2D>();
+			
+			if (movementType == MovementType.Flying)
+			{
+				m_rb.gravityScale = 0f;
+			}
+
 			if (patrolPoints != null && patrolPoints.Length > 0)
 			{
 				m_currentPointIndex = 0;
@@ -45,29 +68,55 @@ namespace SwampPreachers.Enemies
 			if (target != null)
 			{
 				// Move towards target
-				// We care about X distance primarily if we are a ground enemy walking?
-				// But let's support basic 2D flight/walk. 
-				// Problem: If Point is slightly higher than ground, RB logic might struggle if not "flying".
-				// Assuming "floating" comment implies falling is desired, so it's a Walker.
-				// Walker logic: Move X towards Target.X. preserve Y velocity.
 				
-				float dist = Vector2.Distance(transform.position, target.position);
-				// If we want to strictly follow path in air (platforms), we use MovePosition or Vel.
-				// But user asked for gravity. So likely walking on ground.
-				
-				if (dist < 0.2f)
+				if (movementType == MovementType.Flying)
 				{
-					// Reached point
-					m_isWaiting = true;
-					m_waitTimer = waitTime;
-					m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
+					// --- FLYING LOGIC ---
+					float dist = Vector2.Distance(transform.position, target.position);
+					if (dist < 0.2f)
+					{
+						// Reached point
+						m_isWaiting = true;
+						m_waitTimer = waitTime;
+						m_rb.linearVelocity = Vector2.zero;
+					}
+					else
+					{
+						Vector2 direction = (target.position - transform.position).normalized;
+						
+						if (pathType == PathType.SineWave)
+						{
+							// Calculate perpendicular vector for wave motion (e.g., (-y, x))
+							Vector2 perp = new Vector2(-direction.y, direction.x);
+							// Add sine wave to velocity
+							float wave = Mathf.Sin(Time.time * sineFrequency) * sineAmplitude;
+							m_rb.linearVelocity = (direction * speed) + (perp * wave);
+						}
+						else
+						{
+							m_rb.linearVelocity = direction * speed;
+						}
+					}
 				}
 				else
 				{
-					Vector2 direction = (target.position - transform.position).normalized;
-					// Apply only X component for walking, preserve Y (gravity)
-					// Verify if we want to jump/fly? Assuming Walking for now given "gravity" request.
-					m_rb.linearVelocity = new Vector2(direction.x * speed, m_rb.linearVelocity.y);
+					// --- GROUND LOGIC ---
+					// Use X distance only for ground enemies
+					float dist = Mathf.Abs(transform.position.x - target.position.x);
+					
+					if (dist < 0.2f)
+					{
+						// Reached point
+						m_isWaiting = true;
+						m_waitTimer = waitTime;
+						m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
+					}
+					else
+					{
+						// Determine direction based on X difference
+						float dirX = Mathf.Sign(target.position.x - transform.position.x);
+						m_rb.linearVelocity = new Vector2(dirX * speed, m_rb.linearVelocity.y);
+					}
 				}
 			}
 		}

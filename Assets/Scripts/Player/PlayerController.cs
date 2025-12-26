@@ -44,7 +44,7 @@ namespace SwampPreachers
 		[SerializeField] private float attackSlowdownDuration = 0.4f;
 
 		[Header("Combat Reaction")]
-		[SerializeField] private Vector2 knockbackForce = new Vector2(10f, 10f);
+		[SerializeField] private Vector2 knockbackForce = new Vector2(5f, 10f);
 		[SerializeField] private float hurtDuration = 0.5f;
 		
 		private float m_hurtTimer;
@@ -300,9 +300,8 @@ namespace SwampPreachers
 			if (isGrounded)
 			{
 				m_extraJumps = extraJumpCount;
-				isHurt = false; // Recovery on ground touch? Or just timer? Plan said timer.
-				// Actually, common platformer trope: you regain control after time OR when hitting ground if time passed.
-				// For now let's stick STRICTLY to timer to avoid instant recovery if you get hit into ground.
+				// isHurt = false; // REMOVED: This was cancelling knockback instantly on ground hits.
+				// We now rely purely on m_hurtTimer to reset isHurt.
 			}
 
 			// grounded remember offset (for more responsive jump)
@@ -463,7 +462,7 @@ namespace SwampPreachers
 			else if (yDiff < -1.0f) // Hit from below
 			{
 				// "bounce slightly up"
-				force = new Vector2(dir * knockbackForce.x, knockbackForce.y * 1.5f);
+				force = new Vector2(dir * knockbackForce.x, knockbackForce.y * 1.2f);
 			}
 
 			m_rb.AddForce(force, ForceMode2D.Impulse);
