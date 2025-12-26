@@ -4541,6 +4541,11 @@ PrefabInstance:
       propertyPath: enableDoubleJump
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1865938915375051438, guid: 3c02ac99ebd71b24cb0f7c53261c4241,
+        type: 3}
+      propertyPath: healthBarOffset.y
+      value: 1.2
+      objectReference: {fileID: 0}
     - target: {fileID: 1865938915660024763, guid: 3c02ac99ebd71b24cb0f7c53261c4241,
         type: 3}
       propertyPath: m_Name
@@ -4560,7 +4565,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -186509900, guid: 7312f9c9e38dce742a9a803d3b75b6e4,
+      objectReference: {fileID: -1817572864, guid: 3978aa585cb6cbc4fb2730068c493b6c,
         type: 3}
     - target: {fileID: 1865938916397552049, guid: 3c02ac99ebd71b24cb0f7c53261c4241,
         type: 3}

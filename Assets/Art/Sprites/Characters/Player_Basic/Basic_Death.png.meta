@@ -73,7 +73,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -87,7 +87,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -132,291 +132,251 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Player Death 64x64_0
+      name: Basic_Death_0
       rect:
         serializedVersion: 2
-        x: 5
-        y: 7
-        width: 20
-        height: 22
+        x: 0
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d7d206bca0c1ee5e0800000000000000
-      internalID: -1878533161879589507
+      spriteID: 9a212d26743ec0747a6206749b7bd7bf
+      internalID: 2072763664
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Death 64x64_1
+      name: Basic_Death_1
       rect:
         serializedVersion: 2
-        x: 12
-        y: 28
-        width: 10
-        height: 10
+        x: 48
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d54346908f0fa7880800000000000000
-      internalID: -8612306389292534691
+      spriteID: 29c559475d1d5704f926c4067b69539a
+      internalID: 1107908875
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Death 64x64_2
+      name: Basic_Death_2
       rect:
         serializedVersion: 2
-        x: 57
-        y: 7
-        width: 15
-        height: 22
+        x: 96
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: fa0711a34e418bfb0800000000000000
-      internalID: -4631929246291234641
+      spriteID: c5aaae8541eb05e4fa091deb17253cde
+      internalID: 1475785850
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Death 64x64_3
+      name: Basic_Death_3
       rect:
         serializedVersion: 2
-        x: 60
-        y: 28
-        width: 10
-        height: 10
+        x: 144
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: bae25f0919fd6dcc0800000000000000
-      internalID: -3686513428660932949
+      spriteID: 478902a71b9dd1e4ba99871d889085b5
+      internalID: 634177722
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Death 64x64_4
+      name: Basic_Death_4
       rect:
         serializedVersion: 2
-        x: 110
-        y: 25
-        width: 10
-        height: 10
+        x: 192
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 95564337f3e697b00800000000000000
-      internalID: 826813225394005337
+      spriteID: 98ad0ed3ff8965c4a89deb6e558f1580
+      internalID: 457182141
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Death 64x64_5
+      name: Basic_Death_5
       rect:
         serializedVersion: 2
-        x: 153
-        y: 7
-        width: 16
-        height: 25
+        x: 240
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 07a3fc9ac2ac93840800000000000000
-      internalID: 5204413137579620976
+      spriteID: 9570362a935e5cd42a8e0553c6d7b40e
+      internalID: 1426801594
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Death 64x64_6
+      name: Basic_Death_6
       rect:
         serializedVersion: 2
-        x: 201
-        y: 7
-        width: 16
-        height: 25
+        x: 288
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e8e47764b3b60bb30800000000000000
-      internalID: 4301055546468290190
+      spriteID: 8cf9fd92180a37142bacee7a70685160
+      internalID: -832775684
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Death 64x64_7
+      name: Basic_Death_7
       rect:
         serializedVersion: 2
-        x: 249
-        y: 7
-        width: 16
-        height: 25
+        x: 336
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 0b738feb73a53b1e0800000000000000
-      internalID: -2183302198870919248
+      spriteID: d1d8e41d3f96b0f45a203580ca1dbf62
+      internalID: -667856681
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Death 64x64_8
+      name: Basic_Death_8
       rect:
         serializedVersion: 2
-        x: 105
-        y: 7
-        width: 14
-        height: 19
+        x: 384
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 1028298b6d333de20800000000000000
-      internalID: 3374097543143260673
+      spriteID: 18966fb7a1a0fbf4ab9a347aeb643d3e
+      internalID: -1389489181
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Death 64x64_9
+      name: Basic_Death_9
       rect:
         serializedVersion: 2
-        x: 297
-        y: 7
-        width: 28
-        height: 20
+        x: 432
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 4eb6535f9adead7e0800000000000000
-      internalID: -1739816991806100508
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Player Death 64x64_10
-      rect:
-        serializedVersion: 2
-        x: 345
-        y: 7
-        width: 30
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0f99971b1c8bb8d60800000000000000
-      internalID: 7893605913942661616
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Player Death 64x64_11
-      rect:
-        serializedVersion: 2
-        x: 393
-        y: 7
-        width: 30
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4d96e50da84a6e5f0800000000000000
-      internalID: -727713373665465900
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Player Death 64x64_12
-      rect:
-        serializedVersion: 2
-        x: 441
-        y: 7
-        width: 30
-        height: 7
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d57626355c2eabad0800000000000000
-      internalID: -2685584890637686947
+      spriteID: 6afaf85ac806a6b41a9c8a8752ee924f
+      internalID: -399795014
       vertices: []
       indices: 
       edges: []
@@ -425,7 +385,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: c058549cf28ed2a4eaf10550fd7352fd
     internalID: 0
     vertices: []
     indices: 
@@ -433,21 +393,20 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":10.0,"y":1.0},"gridSpriteSize":{"x":48.0,"y":48.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Player Death 64x64_0: -1878533161879589507
-      Player Death 64x64_1: -8612306389292534691
-      Player Death 64x64_10: 7893605913942661616
-      Player Death 64x64_11: -727713373665465900
-      Player Death 64x64_12: -2685584890637686947
-      Player Death 64x64_2: -4631929246291234641
-      Player Death 64x64_3: -3686513428660932949
-      Player Death 64x64_4: 826813225394005337
-      Player Death 64x64_5: 5204413137579620976
-      Player Death 64x64_6: 4301055546468290190
-      Player Death 64x64_7: -2183302198870919248
-      Player Death 64x64_8: 3374097543143260673
-      Player Death 64x64_9: -1739816991806100508
+      Basic_Death_0: 2072763664
+      Basic_Death_1: 1107908875
+      Basic_Death_2: 1475785850
+      Basic_Death_3: 634177722
+      Basic_Death_4: 457182141
+      Basic_Death_5: 1426801594
+      Basic_Death_6: -832775684
+      Basic_Death_7: -667856681
+      Basic_Death_8: -1389489181
+      Basic_Death_9: -399795014
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

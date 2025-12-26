@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SwampPreachers
 {
@@ -11,6 +12,20 @@ namespace SwampPreachers
 		[SerializeField] public bool enableCrouch = true;
 		[SerializeField] public bool enableAttack = true;
 		[SerializeField] public bool enableAirAttack = false;
+
+		[Header("Health")]
+		[SerializeField] private int maxHealth = 3;
+		[SerializeField] private float deathDelay = 2f;
+		private int currentHealth;
+		private bool m_hasTriggeredDeath = false;
+
+		[Header("UI")]
+		[SerializeField] private bool showHealthBar = true;
+		[SerializeField] private Vector2 healthBarOffset = new Vector2(0f, 0.8f);
+		[SerializeField] private Vector2 healthBarSize = new Vector2(1f, 0.15f);
+
+		private Transform m_healthBarRoot;
+		private Transform m_healthBarFill;
 
 		[Header("Movement")]
 		[SerializeField] private float speed;
@@ -98,6 +113,7 @@ namespace SwampPreachers
 		private Vector2 m_originalColliderOffset;
 		[HideInInspector] public bool isCrouching = false;
 		private SpriteRenderer m_spriteRenderer;
+		private Animator m_animator;
 		
 		// 0 -> none, 1 -> right, -1 -> left
 		private int m_onWallSide = 0;
@@ -125,6 +141,8 @@ namespace SwampPreachers
 			m_originalColliderOffset = m_collider.offset;
 			m_dustParticle = GetComponentInChildren<ParticleSystem>();
 			m_spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+			m_animator = GetComponentInChildren<Animator>();
+			currentHealth = maxHealth;
 			
 			// Auto-setup shader if possible
 			// Assuming the user didn't assign a material manually, we might want to ensure we can flash.
@@ -134,6 +152,9 @@ namespace SwampPreachers
 			{
 				m_spriteRenderer.material.shader = Shader.Find("SwampPreachers/SpriteFlash");
 			}
+
+			if (showHealthBar)
+				CreateHealthBar();
 		}
 
 		private void FixedUpdate()
@@ -319,8 +340,19 @@ namespace SwampPreachers
 
 			if (isHurt)
 			{
+				// Death Check on Landing
+				if (currentHealth <= 0 && !m_hasTriggeredDeath)
+				{
+					// If grounded and NOT moving upwards (falling or standing)
+					if (isGrounded && m_rb.linearVelocity.y <= 0.1f)
+					{
+						m_hasTriggeredDeath = true;
+						Die();
+					}
+				}
+
 				m_hurtTimer -= Time.deltaTime;
-				if (m_hurtTimer <= 0f)
+				if (m_hurtTimer <= 0f && currentHealth > 0) // Only recover if alive
 					isHurt = false;
 				else
 					return; // disable input
@@ -421,15 +453,26 @@ namespace SwampPreachers
 			Vector3 scale = transform.localScale;
 			scale.x *= -1;
 			transform.localScale = scale;
+
+			// Fix Health Bar Flip
+			if (m_healthBarRoot != null)
+			{
+				Vector3 barScale = m_healthBarRoot.localScale;
+				barScale.x *= -1;
+				m_healthBarRoot.localScale = barScale;
+			}
 		}
 
 		public void TakeDamage(Vector2 sourcePosition)
 		{
-			if (isHurt) return;
+			if (isHurt || currentHealth <= 0) return;
+
+			// Decrease Health
+			currentHealth--;
+			
+			// Apply Hurt state immediately to disable inputs / enable physics (even if dead)
 
 			isHurt = true;
-			m_hurtTimer = hurtDuration;
-			
 			m_hurtTimer = hurtDuration;
 			
 			// Face the source (Face TOWARDS the source)
@@ -477,6 +520,67 @@ namespace SwampPreachers
 			}
 
 			m_rb.AddForce(force, ForceMode2D.Impulse);
+
+			// Update UI
+			if (showHealthBar)
+				UpdateHealthBar();
+			
+			// Note: We do NOT die here. We wait for Update() -> Landing to trigger Die().
+		}
+
+		private void CreateHealthBar()
+		{
+			// Create Root
+			GameObject root = new GameObject("HealthBar");
+			root.transform.SetParent(transform);
+			root.transform.localPosition = healthBarOffset;
+			m_healthBarRoot = root.transform;
+
+			// Generate Texture
+			Texture2D tex = new Texture2D(1, 1);
+			tex.filterMode = FilterMode.Point;
+			tex.SetPixel(0, 0, Color.white);
+			tex.Apply();
+			
+			// PPU 1 for correct sizing
+			Sprite sprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f), 1f);
+
+			// Background (Red)
+			GameObject bg = new GameObject("Background");
+			bg.transform.SetParent(root.transform);
+			bg.transform.localPosition = Vector3.zero;
+			bg.transform.localScale = new Vector3(healthBarSize.x, healthBarSize.y, 1f);
+			SpriteRenderer bgSr = bg.AddComponent<SpriteRenderer>();
+			bgSr.sprite = sprite;
+			bgSr.color = Color.red;
+			bgSr.sortingOrder = 100;
+
+			// Fill (Green)
+			GameObject fill = new GameObject("Fill");
+			fill.transform.SetParent(root.transform);
+			
+			// Left-Pivoted Sprite
+			Sprite leftPivotSprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0f, 0.5f), 1f);
+
+			fill.transform.localPosition = new Vector3(-healthBarSize.x / 2f, 0f, 0f);
+			fill.transform.localScale = new Vector3(healthBarSize.x, healthBarSize.y, 1f);
+			
+			m_healthBarFill = fill.transform;
+			SpriteRenderer fillSr = fill.AddComponent<SpriteRenderer>();
+			fillSr.sprite = leftPivotSprite;
+			fillSr.color = Color.green;
+			fillSr.sortingOrder = 101;
+		}
+
+		private void UpdateHealthBar()
+		{
+			if (m_healthBarFill != null)
+			{
+				float pct = Mathf.Clamp01((float)currentHealth / maxHealth);
+				Vector3 s = m_healthBarFill.localScale;
+				s.x = healthBarSize.x * pct;
+				m_healthBarFill.localScale = s;
+			}
 		}
 
 		// Debug Inputs
@@ -578,6 +682,33 @@ namespace SwampPreachers
 			{
 				Gizmos.DrawWireSphere(attackPoint.position, attackRange);
 			}
+		}
+
+		private void Die()
+		{
+			isCurrentlyPlayable = false;
+			m_rb.linearVelocity = Vector2.zero;
+			isDashing = false;
+			
+			// Disable physics/collider to prevent further hits
+			// m_rb.simulated = false; // We might want gravity to keep body on ground? 
+			// Instead let's just make sure we don't move and ignore inputs (already done by isCurrentlyPlayable)
+			// But maybe disable collider so enemies walk past?
+			// m_collider.enabled = false; 
+
+			if (m_animator != null)
+			{
+				m_animator.SetTrigger("Die");
+			}
+
+			Debug.Log("Player Died. Reloading scene...");
+			StartCoroutine(ReloadScene());
+		}
+
+		private System.Collections.IEnumerator ReloadScene()
+		{
+			yield return new WaitForSeconds(deathDelay);
+			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 		}
 	}
 }

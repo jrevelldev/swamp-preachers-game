@@ -153,22 +153,44 @@ namespace SwampPreachers.Enemies
 				PlayerController player = collision.gameObject.GetComponent<PlayerController>();
 				if (player != null)
 				{
-					// Check for stomp
-					// Conditions: CanBeStomped + Player is Falling + Player is Roughly Above + Player NOT Hurt + Player NOT Grounded
-					bool isFalling = player.GetComponent<Rigidbody2D>().linearVelocity.y < 0.1f; 
-					bool isAbove = player.transform.position.y > transform.position.y + 0.3f; 
-
-					// Critical Fix: Must NOT be grounded. Walking into enemy on ground should hurt player, not stomp.
-					if (canBeStomped && isFalling && isAbove && !player.isHurt && !player.isGrounded)
-					{
-						TakeDamage(1); 
-						player.Bounce();
-					}
-					else
-					{
-						player.TakeDamage(transform.position);
-					}
+					HandleCollision(player);
 				}
+			}
+		}
+
+		private void OnCollisionStay2D(Collision2D collision)
+		{
+			if (collision.gameObject.CompareTag("Player"))
+			{
+				PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+				if (player != null)
+				{
+					HandleCollision(player);
+				}
+			}
+		}
+
+		private void HandleCollision(PlayerController player)
+		{
+			// Check for stomp
+			// Conditions: CanBeStomped + Player is Falling + Player is Roughly Above + Player NOT Hurt + Player NOT Grounded
+			Vector2 pVel = player.GetComponent<Rigidbody2D>().linearVelocity;
+			bool isFalling = pVel.y < 0.1f; 
+			bool isRising = pVel.y > 0.1f;
+			bool isAbove = player.transform.position.y > transform.position.y + 0.3f; 
+
+			// Safety: If we just bounced (Rising) and are above, don't hurt player.
+			if (isAbove && isRising) return;
+
+			// Critical Fix: Must NOT be grounded. Walking into enemy on ground should hurt player, not stomp.
+			if (canBeStomped && isFalling && isAbove && !player.isHurt && !player.isGrounded)
+			{
+				TakeDamage(1); 
+				player.Bounce();
+			}
+			else
+			{
+				player.TakeDamage(transform.position);
 			}
 		}
 
