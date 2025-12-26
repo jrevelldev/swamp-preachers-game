@@ -42,6 +42,12 @@ namespace SwampPreachers
 		[Header("Combat")]
 		[SerializeField] private float attackSpeedDivisor = 2f;
 		[SerializeField] private float attackSlowdownDuration = 0.4f;
+		[SerializeField] private int attackDamage = 1;
+		[SerializeField] private float attackRange = 0.5f;
+		[SerializeField] private float attackKnockback = 5f;
+		[SerializeField] private float bounceForce = 15f;
+		[SerializeField] private Transform attackPoint;
+		[SerializeField] private LayerMask enemyLayers;
 
 		[Header("Combat Reaction")]
 		[SerializeField] private Vector2 knockbackForce = new Vector2(5f, 10f);
@@ -347,6 +353,7 @@ namespace SwampPreachers
 				{
 					isAttacking = true;
 					m_attackSlowdownTimer = attackSlowdownDuration;
+					CheckAttackHitbox(); // Instant hit for now, can be moved to Animation Event later
 				}
 			}
 			else
@@ -498,6 +505,34 @@ namespace SwampPreachers
 				m_playerSide = -1;
 		}
 
+		// Called when stomping an enemy
+		public void Bounce()
+		{
+			m_rb.linearVelocity = new Vector2(m_rb.linearVelocity.x, bounceForce);
+			m_extraJumps = extraJumpCount; // Optional: Reset jumps on stomp? standard platformer mechanic
+		}
+
+		private void CheckAttackHitbox()
+		{
+			if (attackPoint == null) return;
+
+			Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+			foreach (Collider2D enemyCollider in hitEnemies)
+			{
+				// We need a common interface or check for specific script
+				// For now, looking for SimplePatrolEnemy specifically or generic interface
+				var enemy = enemyCollider.GetComponent<Enemies.SimplePatrolEnemy>();
+				if (enemy != null)
+				{
+					enemy.TakeDamage(attackDamage);
+					// Calculate knockback direction
+					float dir = Mathf.Sign(enemyCollider.transform.position.x - transform.position.x);
+					enemy.ApplyKnockback(new Vector2(dir * attackKnockback, 2f)); // minimal y lift
+				}
+			}
+		}
+
 		private bool CanStand()
 		{
 			// Check if we can maximize the collider size
@@ -524,12 +559,21 @@ namespace SwampPreachers
 			m_spriteRenderer.material.SetFloat("_FlashAmount", 0f);
 		}
 
-		private void OnDrawGizmosSelected()
+		private void OnDrawGizmos()
 		{
 			Gizmos.color = Color.red;
-			Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+			if (groundCheck != null)
+				Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+			
+			Gizmos.color = Color.blue;
 			Gizmos.DrawWireSphere((Vector2)transform.position + grabRightOffset, grabCheckRadius);
 			Gizmos.DrawWireSphere((Vector2)transform.position + grabLeftOffset, grabCheckRadius);
+			
+			Gizmos.color = Color.yellow;
+			if (attackPoint != null)
+			{
+				Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+			}
 		}
 	}
 }

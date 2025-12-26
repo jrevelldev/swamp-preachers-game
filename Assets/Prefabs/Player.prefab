@@ -277,6 +277,13 @@ MonoBehaviour:
     m_Bits: 128
   attackSpeedDivisor: 2
   attackSlowdownDuration: 0.4
+  attackDamage: 1
+  attackRange: 0.5
+  bounceForce: 15
+  attackPoint: {fileID: 1865938915660024764}
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 1
   knockbackForce: {x: 10, y: 10}
   hurtDuration: 0.25
   isHurt: 0

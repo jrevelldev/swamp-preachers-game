@@ -322,6 +322,11 @@ MonoBehaviour:
   - {fileID: 1033194608}
   speed: 2
   waitTime: 1
+  maxHealth: 3
+  canBeStomped: 1
+  showHealthBar: 1
+  healthBarOffset: {x: 0, y: 0.8}
+  healthBarSize: {x: 1, y: 0.15}
   movementType: 0
   pathType: 0
   sineFrequency: 2
@@ -338,7 +343,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 10
+  m_Mass: 2
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 1
@@ -450,7 +455,7 @@ SpriteRenderer:
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6,
     type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.5346782, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1229,6 +1234,11 @@ MonoBehaviour:
   - {fileID: 1027413135}
   speed: 3
   waitTime: 0
+  maxHealth: 1
+  canBeStomped: 1
+  showHealthBar: 0
+  healthBarOffset: {x: 0, y: 0.8}
+  healthBarSize: {x: 1, y: 0.15}
   movementType: 1
   pathType: 1
   sineFrequency: 2
@@ -1347,7 +1357,7 @@ SpriteRenderer:
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b,
     type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.6197973, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -4531,11 +4541,26 @@ PrefabInstance:
       propertyPath: enableDoubleJump
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1865938915660024763, guid: 3c02ac99ebd71b24cb0f7c53261c4241,
+        type: 3}
+      propertyPath: m_Name
+      value: AttackPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 1865938915660024764, guid: 3c02ac99ebd71b24cb0f7c53261c4241,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 1865938915660024764, guid: 3c02ac99ebd71b24cb0f7c53261c4241,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.06
+      objectReference: {fileID: 0}
     - target: {fileID: 1865938916397552049, guid: 3c02ac99ebd71b24cb0f7c53261c4241,
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -1817572864, guid: 3978aa585cb6cbc4fb2730068c493b6c,
+      objectReference: {fileID: -186509900, guid: 7312f9c9e38dce742a9a803d3b75b6e4,
         type: 3}
     - target: {fileID: 1865938916397552049, guid: 3c02ac99ebd71b24cb0f7c53261c4241,
         type: 3}
