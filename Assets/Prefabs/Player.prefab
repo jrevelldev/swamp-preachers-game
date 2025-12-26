@@ -264,7 +264,7 @@ MonoBehaviour:
     type: 3}
   dashSpeed: 25
   startDashTime: 0.15
-  dashCooldown: 0.2
+  dashCooldown: 0.5
   dashEffect: {fileID: 8212761198797595994, guid: aa9df449b161ff64a9fe962a6a3f05fb,
     type: 3}
   groundCheck: {fileID: 1865938915023229146}
@@ -279,6 +279,7 @@ MonoBehaviour:
   attackSlowdownDuration: 0.4
   attackDamage: 1
   attackRange: 0.5
+  attackKnockback: 5
   bounceForce: 15
   attackPoint: {fileID: 1865938915660024764}
   enemyLayers:

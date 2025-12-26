@@ -333,6 +333,7 @@ namespace SwampPreachers
 				if (enableDash && !isCrouching && !m_wallGrabbing && InputSystem.Dash())
 				{
 					isDashing = true;
+					m_dashTime = startDashTime; // FIX: Ensure full dash duration is reset on start
 					// dash effect
 					PoolManager.instance.ReuseObject(dashEffect, transform.position, Quaternion.identity);
 					// if player in air while dashing
@@ -440,6 +441,9 @@ namespace SwampPreachers
 			// Visual Flash
 			if (m_spriteRenderer != null)
 				StartCoroutine(FlashRoutine());
+
+			// Cancel Dash so physics can take over
+			isDashing = false;
 
 			// Zero out velocity before knockback
 			m_rb.linearVelocity = Vector2.zero;
