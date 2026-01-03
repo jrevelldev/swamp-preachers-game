@@ -183,7 +183,8 @@ namespace SwampPreachers.Enemies
 			if (isAbove && isRising) return;
 
 			// Critical Fix: Must NOT be grounded. Walking into enemy on ground should hurt player, not stomp.
-			if (canBeStomped && isFalling && isAbove && !player.isHurt && !player.isGrounded)
+			// Also disable stomp if dashing (prevents instant kill when dashing into enemy from above)
+			if (canBeStomped && isFalling && isAbove && !player.isHurt && !player.isGrounded && !player.isDashing)
 			{
 				TakeDamage(1); 
 				player.Bounce();
