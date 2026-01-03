@@ -14,6 +14,12 @@ namespace SwampPreachers
 		private static readonly int IsDashing = Animator.StringToHash("IsDashing");
 		private static readonly int Melee = Animator.StringToHash("Melee");
 		private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
+		private static readonly int IsWallClimbing = Animator.StringToHash("IsWallClimbing");
+		private static readonly int ClimbSpeed = Animator.StringToHash("ClimbSpeed");
+		private static readonly int LedgeClimb = Animator.StringToHash("LedgeClimb"); // Trigger?
+
+		[Header("Climbing Animation")]
+		[SerializeField] private float climbAnimSpeedMultiplier = 0.5f;
 
 		private void Start()
 		{
@@ -55,6 +61,25 @@ namespace SwampPreachers
 
 			// dash animation
 			m_anim.SetBool(IsDashing, m_controller.isDashing);
+
+			// wall climbing animation
+			// FIX: Only play wall climb if NOT ledge climbing
+			bool isLedgeClimbing = m_controller.isLedgeClimbing;
+			bool isClimbing = m_controller.isWallClimbing && !isLedgeClimbing;
+			
+			m_anim.SetBool(LedgeClimb, isLedgeClimbing);
+			m_anim.SetBool(IsWallClimbing, isClimbing);
+			
+			if (isClimbing)
+			{
+				float vInput = InputSystem.VerticalRaw();
+				float direction = 0f;
+				if (Mathf.Abs(vInput) > 0.01f)
+				{
+					direction = Mathf.Sign(vInput);
+				}
+				m_anim.SetFloat(ClimbSpeed, direction * climbAnimSpeedMultiplier);
+			}
 
 			// attack animation
 			if(m_controller.isAttacking)

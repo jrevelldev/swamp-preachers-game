@@ -52,7 +52,6 @@ namespace SwampPreachers
 		[SerializeField] private Transform groundCheck;
 		[SerializeField] private float groundCheckRadius;
 		[SerializeField] private LayerMask whatIsGround;
-		[SerializeField] private LayerMask whatIsWall;
 
 		[Header("Combat")]
 		[SerializeField] private float attackSpeedDivisor = 2f;
@@ -81,23 +80,26 @@ namespace SwampPreachers
 		// controls whether this instance is currently playable or not
 		[HideInInspector] public bool isCurrentlyPlayable = false;
 
-		[Header("Wall grab & jump")]
+		[Header("Wall Movement")]
+		[SerializeField] private LayerMask whatIsWall;
 		[Tooltip("Right offset of the wall detection sphere")]
-		public Vector2 grabRightOffset = new Vector2(0.16f, 0f);
-		public Vector2 grabLeftOffset = new Vector2(-0.16f, 0f);
+		public Vector2 grabRightOffset = new Vector2(0.16f, 0.2f);
+		public Vector2 grabLeftOffset = new Vector2(-0.16f, 0.2f);
 		public float grabCheckRadius = 0.24f;
 		public float slideSpeed = 2.5f;
 		public Vector2 wallJumpForce = new Vector2(10.5f, 18f);
 
 		public Vector2 wallClimbForce = new Vector2(4f, 14f);
 		
-		[Header("Climbing")]
+		// [Header("Climbing")] -> Movable to Animator script if needed, or keep for physics
 		[SerializeField] public float climbSpeed = 3f;
 		[SerializeField] private LayerMask whatIsClimbable;
-		[SerializeField] private Vector2 ledgeCheckOffset = new Vector2(0.16f, 1.25f); // Check above Grab Offset
-		[SerializeField] private string climbingStateParam = "IsWallClimbing";
-		[SerializeField] private string climbingSpeedParam = "ClimbSpeed";
-		[SerializeField] private float climbAnimSpeedMultiplier = 0.5f; // Slower animation
+		[SerializeField] private Vector2 ledgeCheckOffset = new Vector2(0.16f, 0.4f); // Check above Grab Offset
+		[SerializeField] private Vector2 ledgeTeleportOffset = new Vector2(1.0f, 1.5f); // X (Forward), Y (Up)
+		// Animation params moved to PlayerAnimator
+		// [SerializeField] private string climbingStateParam = "IsWallClimbing";
+		// [SerializeField] private string climbingSpeedParam = "ClimbSpeed";
+		// [SerializeField] private float climbAnimSpeedMultiplier = 0.5f; // Slower animation
 
 		private Rigidbody2D m_rb;
 		private float m_defaultGravity;
@@ -113,7 +115,9 @@ namespace SwampPreachers
 		private bool m_onLeftWall = false;
 		private bool m_wallGrabbing = false;
 		// Make public/property so PlayerAnimator can read it
-		public bool isWallClimbing => m_isWallClimbing || m_isLedgeClimbing; 
+		// Changed: Exclude Ledge Climbing from Wall Climbing state so they are distinct
+		public bool isWallClimbing => m_isWallClimbing; 
+		public bool isLedgeClimbing => m_isLedgeClimbing;
 		private bool m_isWallClimbing = false;
 		private bool m_isLedgeClimbing = false;
 		private readonly float m_wallStickTime = 0.25f;
@@ -198,9 +202,9 @@ namespace SwampPreachers
 			// calculate player and wall sides as integers
 			CalculateSides();
 
-			// Update Animator
-			if (m_animator != null)
-				m_animator.SetBool(climbingStateParam, m_isWallClimbing);
+			// Update Animator logic moved to PlayerAnimator.cs
+			// if (m_animator != null)
+			// 	m_animator.SetBool(climbingStateParam, m_isWallClimbing);
 
 			if((m_wallGrabbing || isGrounded) && m_wallJumping)
 			{
@@ -318,15 +322,23 @@ namespace SwampPreachers
 				}
 
 				// wall grab & climb
-				if(m_onWall && !isGrounded && m_rb.linearVelocity.y <= 0f && m_playerSide == m_onWallSide && !m_isLedgeClimbing)
+				// Calculate grab offset based on wall side
+				Vector2 grabOffset = m_onRightWall ? grabRightOffset : grabLeftOffset;
+				bool isClimbableWall = Physics2D.OverlapCircle((Vector2)transform.position + grabOffset, grabCheckRadius, whatIsClimbable);
+				
+				// Allow grab if falling OR if it's a climbable wall (can grab while jumping up)
+				bool canGrab = m_onWall && !isGrounded && m_playerSide == m_onWallSide && !m_isLedgeClimbing;
+				bool isFalling = m_rb.linearVelocity.y <= 0f;
+
+				if(canGrab && (isFalling || isClimbableWall))
 				{
-					actuallyWallGrabbing = true;    // for animation
+					actuallyWallGrabbing = true;    // temporarily true, disabled below if climbing
 					m_wallGrabbing = true;
 					
 					// Detect if this specific wall is climbable
 					// Check the grab point (Right or Left offset depending on wall side)
-					Vector2 checkPos = (Vector2)transform.position + (m_onRightWall ? grabRightOffset : grabLeftOffset);
-					bool isClimbableWall = Physics2D.OverlapCircle(checkPos, grabCheckRadius, whatIsClimbable);
+					Vector2 checkPos = (Vector2)transform.position + grabOffset;
+					// bool isClimbableWall already calculated above
 					
 					// DEBUG: Remove after testing
 					// Debug.Log($"WallGrab: {m_onWall} | Side: {m_onWallSide} | Climbable: {isClimbableWall} | V-Input: {InputSystem.VerticalRaw()}");
@@ -356,18 +368,8 @@ namespace SwampPreachers
 							actuallyWallGrabbing = false; // FIX: Disable generic "Wall Grab/Slide" animation to avoid conflict
 							m_rb.gravityScale = 0f; // Disable gravity to hang/climb smoothly
 							
-							// Animation Speed Control
-							if (m_animator != null)
-							{
-						// FIX: Use Sign() to ignore analog stick magnitude, but allow 0 to pause.
-								// This ensures we always play at EXACTLY (1 * multiplier) or (-1 * multiplier) or 0.
-								float direction = 0f;
-								if (Mathf.Abs(vInput) > 0.01f)
-								{
-									direction = Mathf.Sign(vInput);
-								}
-								m_animator.SetFloat(climbingSpeedParam, direction * climbAnimSpeedMultiplier);
-							}
+							// Animation Speed Control handled in PlayerAnimator.cs
+							// if (m_animator != null) ...
 							
 							if (vInput == 0f)
 							{
@@ -440,10 +442,10 @@ namespace SwampPreachers
 			if (!isCurrentlyPlayable) return;
 			
 			// Ledge Drop Logic
-			if (isGrounded && InputSystem.VerticalRaw() < -0.8f && !m_isLedgeClimbing)
-			{
-				CheckLedgeDrop();
-			}
+			// if (isGrounded && InputSystem.VerticalRaw() < -0.8f && !m_isLedgeClimbing)
+			// {
+			// 	CheckLedgeDrop();
+			// }
 
 			if (isHurt)
 			{
@@ -751,27 +753,65 @@ namespace SwampPreachers
 			m_rb.gravityScale = 0f; // Disable gravity
 			if (m_collider != null) m_collider.enabled = false; // Prevent clipping
 			
+			// Setup Teleport Target
+			Vector3 startPos = transform.position;
+			float dir = m_facingRight ? 1f : -1f;
+			Vector3 targetPos = startPos + new Vector3(dir * ledgeTeleportOffset.x, ledgeTeleportOffset.y, 0f);
+
+			// --- GHOST CAMERA LOGIC ---
+			// Create a ghost target for the camera to follow so it moves smoothly while player mimics movement
+			GameObject ghostTarget = new GameObject("ClimbGhostCameraTarget");
+			ghostTarget.transform.position = startPos;
 			
+			CameraFollow cam = FindObjectOfType<CameraFollow>();
+			if (cam != null)
+			{
+				cam.SetTarget(ghostTarget.transform);
+			}
+			// --------------------------
+
+			// Wait for the animator to pick up the change
+			yield return null; 
+			yield return null;
+
+			// Wait for Animation to Finish
+			float safetyTimer = 0f;
+			while (m_animator != null && safetyTimer < 2.5f)
+			{
+				AnimatorStateInfo stateInfo = m_animator.GetCurrentAnimatorStateInfo(0);
+				
+				if (stateInfo.IsName("LedgeClimb"))
+				{
+					// Move Ghost to match would-be player position (Linear Lerp for smooth camera)
+					float t = Mathf.Clamp01(stateInfo.normalizedTime);
+					ghostTarget.transform.position = Vector3.Lerp(startPos, targetPos, t);
+
+					if (stateInfo.normalizedTime >= 1.0f) // Animation finished
+						break;
+				}
+				
+				safetyTimer += Time.deltaTime;
+				yield return null;
+			}
+			
+			// Teleport Up and Over
+			transform.position = targetPos;
+			
+			// Restore Camera to Player
+			if (cam != null)
+			{
+				cam.SetTarget(transform);
+			}
+			Destroy(ghostTarget);
+
+			// Force Idle Immediately to prevent single-frame flash of "high" LedgeClimb frame
 			if (m_animator != null)
 			{
-				m_animator.SetTrigger("LedgeClimb");
+				m_animator.Play("Idle", 0, 0f); 
 			}
-
-			// Wait for animation to play ~halfway or simply wait a duration
-			yield return new WaitForSeconds(0.5f);
-
-			// Teleport Up and Over
-			// Assuming ledge is roughly 1 unit high/forward from current grab point
-			// Refined: ledgeCheckOffset.y is ~1.25 above pivot. We want to land roughly there.
-			// Let's move Up 1.5 units and Forward 0.5 units in facing direction.
-			float dir = m_facingRight ? 1f : -1f;
-			transform.position += new Vector3(dir * 0.5f, 1.5f, 0f); // 0.5f forward, 1.5f up
 
 			// Restore
 			if (m_collider != null) m_collider.enabled = true;
-
-			// Restore
-			// m_rb.gravityScale = 1f; // Or previous value. Default 1? 
 			m_rb.gravityScale = m_defaultGravity; // Restore cached default
 			
 			m_isLedgeClimbing = false;

@@ -277,9 +277,6 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 256
-  whatIsWall:
-    serializedVersion: 2
-    m_Bits: 128
   attackSpeedDivisor: 2
   attackSlowdownDuration: 0.4
   attackDamage: 1
@@ -300,8 +297,11 @@ MonoBehaviour:
   isAttacking: 0
   actuallyWallGrabbing: 0
   isCurrentlyPlayable: 0
-  grabRightOffset: {x: 0.16, y: 0}
-  grabLeftOffset: {x: -0.16, y: 0}
+  whatIsWall:
+    serializedVersion: 2
+    m_Bits: 128
+  grabRightOffset: {x: 0.16, y: 0.45}
+  grabLeftOffset: {x: -0.16, y: 0.45}
   grabCheckRadius: 0.24
   slideSpeed: 2.5
   wallJumpForce: {x: 10.5, y: 18}
@@ -310,7 +310,8 @@ MonoBehaviour:
   whatIsClimbable:
     serializedVersion: 2
     m_Bits: 64
-  ledgeCheckOffset: {x: 0.16, y: 1.25}
+  ledgeCheckOffset: {x: 0.3, y: 0.67}
+  ledgeTeleportOffset: {x: 1, y: 1.5}
   isCrouching: 0
 --- !u!114 &1173712999407116002
 MonoBehaviour:
@@ -324,6 +325,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c342bd39c8203da4bbd4336f799dc8d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  climbAnimSpeedMultiplier: 0.5
 --- !u!1 &1865938915660024763
 GameObject:
   m_ObjectHideFlags: 0
