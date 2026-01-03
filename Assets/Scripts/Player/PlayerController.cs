@@ -88,9 +88,19 @@ namespace SwampPreachers
 		public float grabCheckRadius = 0.24f;
 		public float slideSpeed = 2.5f;
 		public Vector2 wallJumpForce = new Vector2(10.5f, 18f);
+
 		public Vector2 wallClimbForce = new Vector2(4f, 14f);
+		
+		[Header("Climbing")]
+		[SerializeField] public float climbSpeed = 3f;
+		[SerializeField] private LayerMask whatIsClimbable;
+		[SerializeField] private Vector2 ledgeCheckOffset = new Vector2(0.16f, 1.25f); // Check above Grab Offset
+		[SerializeField] private string climbingStateParam = "IsWallClimbing";
+		[SerializeField] private string climbingSpeedParam = "ClimbSpeed";
+		[SerializeField] private float climbAnimSpeedMultiplier = 0.5f; // Slower animation
 
 		private Rigidbody2D m_rb;
+		private float m_defaultGravity;
 		private ParticleSystem m_dustParticle;
 		private bool m_facingRight = true;
 		private float m_groundedRemember = 0f;
@@ -102,6 +112,10 @@ namespace SwampPreachers
 		private bool m_onRightWall = false;
 		private bool m_onLeftWall = false;
 		private bool m_wallGrabbing = false;
+		// Make public/property so PlayerAnimator can read it
+		public bool isWallClimbing => m_isWallClimbing || m_isLedgeClimbing; 
+		private bool m_isWallClimbing = false;
+		private bool m_isLedgeClimbing = false;
 		private readonly float m_wallStickTime = 0.25f;
 		private float m_wallStick = 0f;
 		private bool m_wallJumping = false;
@@ -136,6 +150,7 @@ namespace SwampPreachers
 			m_extraJumpForce = jumpForce * 0.7f;
 
 			m_rb = GetComponent<Rigidbody2D>();
+			m_defaultGravity = m_rb.gravityScale;
 			m_collider = GetComponent<BoxCollider2D>();
 			m_originalColliderSize = m_collider.size;
 			m_originalColliderOffset = m_collider.offset;
@@ -153,23 +168,39 @@ namespace SwampPreachers
 				m_spriteRenderer.material.shader = Shader.Find("SwampPreachers/SpriteFlash");
 			}
 
+			// Debug Warnings
+			if (whatIsWall.value == 0) Debug.LogWarning("PlayerController: 'What Is Wall' LayerMask is empty!");
+			if (whatIsClimbable.value == 0) Debug.LogWarning("PlayerController: 'What Is Climbable' LayerMask is empty!");
+			
 			if (showHealthBar)
 				CreateHealthBar();
 		}
 
 		private void FixedUpdate()
 		{
+			// If Ledge Climbing, physics are controlled by coroutine. Do NOT run update.
+			if (m_isLedgeClimbing) return;
+
 			// check if grounded
 			isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
 			var position = transform.position;
-			// check if on wall
-			m_onWall = Physics2D.OverlapCircle((Vector2)position + grabRightOffset, grabCheckRadius, whatIsWall)
-			          || Physics2D.OverlapCircle((Vector2)position + grabLeftOffset, grabCheckRadius, whatIsWall);
-			m_onRightWall = Physics2D.OverlapCircle((Vector2)position + grabRightOffset, grabCheckRadius, whatIsWall);
-			m_onLeftWall = Physics2D.OverlapCircle((Vector2)position + grabLeftOffset, grabCheckRadius, whatIsWall);
+			// check if on wall (Include Climbable as Wall for attachment)
+			LayerMask combinedWallMask = whatIsWall | whatIsClimbable;
+			m_onWall = Physics2D.OverlapCircle((Vector2)position + grabRightOffset, grabCheckRadius, combinedWallMask)
+			          || Physics2D.OverlapCircle((Vector2)position + grabLeftOffset, grabCheckRadius, combinedWallMask);
+			m_onRightWall = Physics2D.OverlapCircle((Vector2)position + grabRightOffset, grabCheckRadius, combinedWallMask);
+			m_onLeftWall = Physics2D.OverlapCircle((Vector2)position + grabLeftOffset, grabCheckRadius, combinedWallMask);
+			
+			// Reset gravity if not climbing
+			if(!m_isWallClimbing && !m_isLedgeClimbing) 
+				m_rb.gravityScale = m_defaultGravity;
 
 			// calculate player and wall sides as integers
 			CalculateSides();
+
+			// Update Animator
+			if (m_animator != null)
+				m_animator.SetBool(climbingStateParam, m_isWallClimbing);
 
 			if((m_wallGrabbing || isGrounded) && m_wallJumping)
 			{
@@ -286,17 +317,87 @@ namespace SwampPreachers
 					}
 				}
 
-				// wall grab
-				if(m_onWall && !isGrounded && m_rb.linearVelocity.y <= 0f && m_playerSide == m_onWallSide)
+				// wall grab & climb
+				if(m_onWall && !isGrounded && m_rb.linearVelocity.y <= 0f && m_playerSide == m_onWallSide && !m_isLedgeClimbing)
 				{
 					actuallyWallGrabbing = true;    // for animation
 					m_wallGrabbing = true;
-					m_rb.linearVelocity = new Vector2(moveInput * speed, -slideSpeed);
+					
+					// Detect if this specific wall is climbable
+					// Check the grab point (Right or Left offset depending on wall side)
+					Vector2 checkPos = (Vector2)transform.position + (m_onRightWall ? grabRightOffset : grabLeftOffset);
+					bool isClimbableWall = Physics2D.OverlapCircle(checkPos, grabCheckRadius, whatIsClimbable);
+					
+					// DEBUG: Remove after testing
+					// Debug.Log($"WallGrab: {m_onWall} | Side: {m_onWallSide} | Climbable: {isClimbableWall} | V-Input: {InputSystem.VerticalRaw()}");
+
+					if (isClimbableWall)
+					{
+						// --- CLIMBABLE WALL LOGIC ---
+						float vInput = InputSystem.VerticalRaw();
+						
+						// Ledge Check (Use combined mask!)
+						float dir = m_onRightWall ? 1f : -1f;
+						Vector2 ledgeCheckPos = new Vector2(transform.position.x + (dir * ledgeCheckOffset.x), transform.position.y + ledgeCheckOffset.y);
+						// FIX: Use grabCheckRadius instead of 0.1f to strictly match wall detection reach.
+						bool hitLedge = Physics2D.OverlapCircle(ledgeCheckPos, grabCheckRadius, combinedWallMask);
+
+						// Logic:
+						// If we are CLIMBING UP and there is NO WALL above us (hitLedge == false), we found the ledge top.
+						if (vInput > 0f && !hitLedge)
+						{
+							Debug.Log($"[PlayerController] Ledge Climb Triggered! vInput: {vInput}, hitLedge: {hitLedge}");
+							StartCoroutine(LedgeClimbRoutine());
+						}
+						else 
+						{
+							// Climbing Up/Down or Hanging
+							m_isWallClimbing = true;
+							actuallyWallGrabbing = false; // FIX: Disable generic "Wall Grab/Slide" animation to avoid conflict
+							m_rb.gravityScale = 0f; // Disable gravity to hang/climb smoothly
+							
+							// Animation Speed Control
+							if (m_animator != null)
+							{
+						// FIX: Use Sign() to ignore analog stick magnitude, but allow 0 to pause.
+								// This ensures we always play at EXACTLY (1 * multiplier) or (-1 * multiplier) or 0.
+								float direction = 0f;
+								if (Mathf.Abs(vInput) > 0.01f)
+								{
+									direction = Mathf.Sign(vInput);
+								}
+								m_animator.SetFloat(climbingSpeedParam, direction * climbAnimSpeedMultiplier);
+							}
+							
+							if (vInput == 0f)
+							{
+								// HANG - Stop particles if any?
+								m_rb.linearVelocity = Vector2.zero;
+							}
+							else
+							{
+								// CLIMB
+								// FIX: Lock X to 0 to prevent breaking through wall
+								m_rb.linearVelocity = new Vector2(0f, vInput * climbSpeed);
+							}
+						}
+					}
+					else
+					{
+						// --- GLIDE / NORMAL WALL LOGIC ---
+						// No climbing allowed. Enforce Slide.
+						m_isWallClimbing = false;
+						m_rb.gravityScale = m_defaultGravity; // Ensure gravity applies (though typically we counter it for slide? or just let it fall?)
+						// Standard wall slide mechanic usually throttles fall speed
+						m_rb.linearVelocity = new Vector2(moveInput * speed, -slideSpeed);
+					}
+
 					m_wallStick = m_wallStickTime;
 				} else
 				{
 					m_wallStick -= Time.deltaTime;
 					actuallyWallGrabbing = false;
+					m_isWallClimbing = false;
 					if (m_wallStick <= 0f)
 						m_wallGrabbing = false;
 				}
@@ -319,7 +420,7 @@ namespace SwampPreachers
 
 		private void Update()
 		{
-			CheckDebugHurt();
+
 			
 			// horizontal input
 			moveInput = InputSystem.HorizontalRaw();
@@ -337,6 +438,12 @@ namespace SwampPreachers
 				m_groundedRemember = coyoteTime;
 
 			if (!isCurrentlyPlayable) return;
+			
+			// Ledge Drop Logic
+			if (isGrounded && InputSystem.VerticalRaw() < -0.8f && !m_isLedgeClimbing)
+			{
+				CheckLedgeDrop();
+			}
 
 			if (isHurt)
 			{
@@ -427,6 +534,8 @@ namespace SwampPreachers
 			else if(m_jumpBufferCounter > 0f && m_wallGrabbing && moveInput!=m_onWallSide )		// wall jumping off the wall
 			{
 				m_wallGrabbing = false;
+				m_isWallClimbing = false; // FIX: Reset climbing state on jump
+				m_isLedgeClimbing = false;
 				m_wallJumping = true;
 				m_jumpBufferCounter = 0f;
 				Debug.Log("Wall jumped");
@@ -437,6 +546,8 @@ namespace SwampPreachers
 			else if(m_jumpBufferCounter > 0f && m_wallGrabbing && moveInput != 0 && (moveInput == m_onWallSide))      // wall climbing jump
 			{
 				m_wallGrabbing = false;
+				m_isWallClimbing = false; // FIX: Reset climbing state on jump
+				m_isLedgeClimbing = false;
 				m_wallJumping = true;
 				m_jumpBufferCounter = 0f;
 				Debug.Log("Wall climbed");
@@ -583,20 +694,7 @@ namespace SwampPreachers
 			}
 		}
 
-		// Debug Inputs
-		private void CheckDebugHurt()
-		{
-			if (UnityEngine.InputSystem.Keyboard.current == null) return;
-			
-			if (UnityEngine.InputSystem.Keyboard.current.hKey.wasPressedThisFrame)
-				TakeDamage((Vector2)transform.position + Vector2.left); // Hit from left
-			if (UnityEngine.InputSystem.Keyboard.current.jKey.wasPressedThisFrame)
-				TakeDamage((Vector2)transform.position + Vector2.right); // Hit from right
-			if (UnityEngine.InputSystem.Keyboard.current.uKey.wasPressedThisFrame)
-				TakeDamage((Vector2)transform.position + Vector2.up * 2f); // Hit from above
-			if (UnityEngine.InputSystem.Keyboard.current.nKey.wasPressedThisFrame)
-				TakeDamage((Vector2)transform.position + Vector2.down * 2f); // Hit from below
-		}
+
 
 		void CalculateSides()
 		{
@@ -639,6 +737,94 @@ namespace SwampPreachers
 					enemy.ApplyKnockback(new Vector2(dir * attackKnockback, 2f)); // minimal y lift
 				}
 			}
+
+		}
+
+		private System.Collections.IEnumerator LedgeClimbRoutine()
+		{
+			if (m_isLedgeClimbing) yield break;
+
+			Debug.Log("Ledge Climb Triggered");
+			m_isLedgeClimbing = true;
+			isCurrentlyPlayable = false; // Disable Input
+			m_rb.linearVelocity = Vector2.zero; // Freeze
+			m_rb.gravityScale = 0f; // Disable gravity
+			if (m_collider != null) m_collider.enabled = false; // Prevent clipping
+			
+			
+			if (m_animator != null)
+			{
+				m_animator.SetTrigger("LedgeClimb");
+			}
+
+			// Wait for animation to play ~halfway or simply wait a duration
+			yield return new WaitForSeconds(0.5f);
+
+			// Teleport Up and Over
+			// Assuming ledge is roughly 1 unit high/forward from current grab point
+			// Refined: ledgeCheckOffset.y is ~1.25 above pivot. We want to land roughly there.
+			// Let's move Up 1.5 units and Forward 0.5 units in facing direction.
+			float dir = m_facingRight ? 1f : -1f;
+			transform.position += new Vector3(dir * 0.5f, 1.5f, 0f); // 0.5f forward, 1.5f up
+
+			// Restore
+			if (m_collider != null) m_collider.enabled = true;
+
+			// Restore
+			// m_rb.gravityScale = 1f; // Or previous value. Default 1? 
+			m_rb.gravityScale = m_defaultGravity; // Restore cached default
+			
+			m_isLedgeClimbing = false;
+			isCurrentlyPlayable = true;
+		}
+
+		private void CheckLedgeDrop()
+		{
+			// Check if we are at an edge and looking out
+			float dir = m_facingRight ? 1f : -1f;
+			Vector2 scanOrigin = (Vector2)transform.position + new Vector2(dir * 0.5f, 0f);
+			
+			// 1. Check if there is ground AHEAD (should be false)
+			bool groundAhead = Physics2D.Raycast(scanOrigin, Vector2.down, 1f, whatIsGround);
+			
+			if (!groundAhead)
+			{
+				// 2. Check if there is a Climbable Wall BELOW the edge (should be true)
+				// Look down and slightly back towards the wall
+				Vector2 wallCheckOrigin = scanOrigin + new Vector2(0f, -1f); 
+				// Actually, if we walk off, the wall is "behind" the drop point relative to facing, 
+				// or directly below if it's a vertical drop.
+				// Let's check for Climbable roughly where we would hang.
+				
+				bool wallBelow = Physics2D.OverlapCircle(wallCheckOrigin, 0.5f, whatIsClimbable);
+				
+				if (wallBelow)
+				{
+					StartCoroutine(LedgeDropRoutine());
+				}
+			}
+		}
+
+		private System.Collections.IEnumerator LedgeDropRoutine()
+		{
+			m_isLedgeClimbing = true;
+			isCurrentlyPlayable = false;
+			m_rb.linearVelocity = Vector2.zero;
+			
+			// Walk off slightly
+			float dir = m_facingRight ? 1f : -1f;
+			transform.position += new Vector3(dir * 0.4f, 0f, 0f);
+			
+			yield return new WaitForSeconds(0.1f);
+			
+			// Drop Down
+			transform.position += new Vector3(0f, -1.0f, 0f);
+			
+			// Turn around to face the wall
+			Flip();
+			
+			m_isLedgeClimbing = false;
+			isCurrentlyPlayable = true;
 		}
 
 		private bool CanStand()
@@ -677,6 +863,13 @@ namespace SwampPreachers
 			Gizmos.DrawWireSphere((Vector2)transform.position + grabRightOffset, grabCheckRadius);
 			Gizmos.DrawWireSphere((Vector2)transform.position + grabLeftOffset, grabCheckRadius);
 			
+			// Ledge Check Gizmo
+			Vector2 rightLedge = (Vector2)transform.position + new Vector2(ledgeCheckOffset.x, ledgeCheckOffset.y);
+			Vector2 leftLedge = (Vector2)transform.position + new Vector2(-ledgeCheckOffset.x, ledgeCheckOffset.y);
+			Gizmos.color = Color.cyan;
+			Gizmos.DrawWireSphere(rightLedge, 0.1f);
+			Gizmos.DrawWireSphere(leftLedge, 0.1f);
+
 			Gizmos.color = Color.yellow;
 			if (attackPoint != null)
 			{

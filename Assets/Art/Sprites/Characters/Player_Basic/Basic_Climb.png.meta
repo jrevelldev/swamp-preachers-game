@@ -46,7 +46,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -60,7 +60,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 16
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -135,89 +135,89 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Player Side-Climb 48x48_0
+      name: Basic_Climb_0
       rect:
         serializedVersion: 2
-        x: 19
-        y: 6
-        width: 13
-        height: 32
+        x: 0
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 448e209688b901aa0800000000000000
-      internalID: -6192278477454776252
+      spriteID: 110a567255a6d9a49a49b3963d54b569
+      internalID: 1261983390
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Side-Climb 48x48_1
+      name: Basic_Climb_1
       rect:
         serializedVersion: 2
-        x: 67
-        y: 7
-        width: 13
-        height: 31
+        x: 48
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: d75ed2e83c7d933a0800000000000000
-      internalID: -6685074936950823555
+      spriteID: 2367faf2ff7254c4bb2462912b5122cb
+      internalID: -1773238800
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Side-Climb 48x48_2
+      name: Basic_Climb_2
       rect:
         serializedVersion: 2
-        x: 114
-        y: 7
-        width: 14
-        height: 31
+        x: 96
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 8ecd86c6ca717b6b0800000000000000
-      internalID: -5280726008747991832
+      spriteID: 01f18aec15ec6a042836a5c0396748c2
+      internalID: -202790576
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Player Side-Climb 48x48_3
+      name: Basic_Climb_3
       rect:
         serializedVersion: 2
-        x: 163
-        y: 5
-        width: 13
-        height: 33
+        x: 144
+        y: 0
+        width: 48
+        height: 48
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 0fd46a8aea3713900800000000000000
-      internalID: 662437814191148528
+      spriteID: 954f7faf77253d44ebc3be27b14eaf18
+      internalID: -1590732801
       vertices: []
       indices: 
       edges: []
@@ -226,7 +226,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 1165467ccc2551e4ebe091c06fad3da6
     internalID: 0
     vertices: []
     indices: 
@@ -234,12 +234,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":4.0,"y":1.0},"gridSpriteSize":{"x":48.0,"y":48.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Player Side-Climb 48x48_0: -6192278477454776252
-      Player Side-Climb 48x48_1: -6685074936950823555
-      Player Side-Climb 48x48_2: -5280726008747991832
-      Player Side-Climb 48x48_3: 662437814191148528
+      Basic_Climb_0: 1261983390
+      Basic_Climb_1: -1773238800
+      Basic_Climb_2: -202790576
+      Basic_Climb_3: -1590732801
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -21,16 +21,33 @@ namespace SwampPreachers
 			return input;
 		}
 
+		public static float VerticalRaw()
+		{
+			float input = 0f;
+			if (UnityEngine.InputSystem.Keyboard.current != null)
+			{
+				if (UnityEngine.InputSystem.Keyboard.current.wKey.isPressed || UnityEngine.InputSystem.Keyboard.current.upArrowKey.isPressed) input = 1f;
+				if (UnityEngine.InputSystem.Keyboard.current.sKey.isPressed || UnityEngine.InputSystem.Keyboard.current.downArrowKey.isPressed) input = -1f;
+			}
+			if (UnityEngine.InputSystem.Gamepad.current != null && input == 0f)
+			{
+				input = UnityEngine.InputSystem.Gamepad.current.leftStick.y.ReadValue();
+			}
+			return input;
+		}
+
 		public static bool Jump()
 		{
-			bool keyboardJump = UnityEngine.InputSystem.Keyboard.current != null && (UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame || UnityEngine.InputSystem.Keyboard.current.wKey.wasPressedThisFrame || UnityEngine.InputSystem.Keyboard.current.upArrowKey.wasPressedThisFrame);
+			// REMOVED W/UpArrow to prevent accidental jumps while climbing
+			bool keyboardJump = UnityEngine.InputSystem.Keyboard.current != null && (UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame);
 			bool gamepadJump = UnityEngine.InputSystem.Gamepad.current != null && UnityEngine.InputSystem.Gamepad.current.buttonSouth.wasPressedThisFrame;
 			return keyboardJump || gamepadJump;
 		}
 
 		public static bool JumpHeld()
 		{
-			bool keyboardJump = UnityEngine.InputSystem.Keyboard.current != null && (UnityEngine.InputSystem.Keyboard.current.spaceKey.isPressed || UnityEngine.InputSystem.Keyboard.current.wKey.isPressed || UnityEngine.InputSystem.Keyboard.current.upArrowKey.isPressed);
+			// REMOVED W/UpArrow
+			bool keyboardJump = UnityEngine.InputSystem.Keyboard.current != null && (UnityEngine.InputSystem.Keyboard.current.spaceKey.isPressed);
 			bool gamepadJump = UnityEngine.InputSystem.Gamepad.current != null && UnityEngine.InputSystem.Gamepad.current.buttonSouth.isPressed;
 			return keyboardJump || gamepadJump;
 		}
@@ -52,8 +69,9 @@ namespace SwampPreachers
 
 		public static bool Crouch()
 		{
-			bool keyboardCrouch = UnityEngine.InputSystem.Keyboard.current != null && (UnityEngine.InputSystem.Keyboard.current.sKey.isPressed || UnityEngine.InputSystem.Keyboard.current.downArrowKey.isPressed);
-			bool gamepadCrouch = UnityEngine.InputSystem.Gamepad.current != null && (UnityEngine.InputSystem.Gamepad.current.leftStick.y.ReadValue() < -0.5f || UnityEngine.InputSystem.Gamepad.current.dpad.down.isPressed);
+			// CHANGED to 'C' key. Removed S/Down to prevent accidental crouch on ladder/wall
+			bool keyboardCrouch = UnityEngine.InputSystem.Keyboard.current != null && (UnityEngine.InputSystem.Keyboard.current.cKey.isPressed);
+			bool gamepadCrouch = UnityEngine.InputSystem.Gamepad.current != null && (UnityEngine.InputSystem.Gamepad.current.dpad.down.isPressed); // Gamepad D-Pad Down usually fine, stick might be iffy
 			return keyboardCrouch || gamepadCrouch;
 		}
 	}

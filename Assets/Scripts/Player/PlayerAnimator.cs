@@ -32,7 +32,11 @@ namespace SwampPreachers
 			m_anim.SetFloat(JumpState, verticalVelocity);
 
 			// Jump animation
-			if (!m_controller.isGrounded && !m_controller.actuallyWallGrabbing)
+			// DEBUG STATE
+			// if (m_controller.isWallClimbing) Debug.Log("PlayerAnimator: Wall Climbing is TRUE");
+			// else if (!m_controller.isGrounded) Debug.Log("PlayerAnimator: Air (Not Climbing)");
+
+			if (!m_controller.isGrounded && !m_controller.actuallyWallGrabbing && !m_controller.isWallClimbing)
 			{
 				m_anim.SetBool(IsJumping, true);
 			}
@@ -41,7 +45,7 @@ namespace SwampPreachers
 				m_anim.SetBool(IsJumping, false);
 			}
 
-			if(!m_controller.isGrounded && m_controller.actuallyWallGrabbing)
+			if(!m_controller.isGrounded && m_controller.actuallyWallGrabbing && !m_controller.isWallClimbing)
 			{
 				m_anim.SetBool(WallGrabbing, true);
 			} else

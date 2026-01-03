@@ -252,6 +252,11 @@ MonoBehaviour:
   enableCrouch: 1
   enableAttack: 1
   enableAirAttack: 0
+  maxHealth: 3
+  deathDelay: 2
+  showHealthBar: 1
+  healthBarOffset: {x: 0, y: 1.2}
+  healthBarSize: {x: 1, y: 0.15}
   speed: 7
   crouchSpeedDivisor: 2
   jumpForce: 15
@@ -301,6 +306,11 @@ MonoBehaviour:
   slideSpeed: 2.5
   wallJumpForce: {x: 10.5, y: 18}
   wallClimbForce: {x: 4, y: 14}
+  climbSpeed: 3
+  whatIsClimbable:
+    serializedVersion: 2
+    m_Bits: 64
+  ledgeCheckOffset: {x: 0.16, y: 1.25}
   isCrouching: 0
 --- !u!114 &1173712999407116002
 MonoBehaviour:
