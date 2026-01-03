@@ -210,6 +210,33 @@ namespace SwampPreachers
 			{
 				m_wallJumping = false;
 			}
+			if((m_wallGrabbing || isGrounded) && m_wallJumping)
+			{
+				m_wallJumping = false;
+			}
+			if (!isCurrentlyPlayable)
+			{
+				// Safety enforcement for Death state:
+				// Ensure gravity is ON so we fall (fix 'floating' bug)
+				if (m_rb.gravityScale <= 0.1f) m_rb.gravityScale = 3f; // Hardcode to 3 to ensure fall
+				
+				// Clamp upward velocity to prevent floating away if impulse was high
+				if (m_rb.linearVelocity.y > 0f) 
+				{
+					m_rb.linearVelocity = new Vector2(m_rb.linearVelocity.x, m_rb.linearVelocity.y * 0.9f); // Dampen upward
+				}
+				
+				// Ensure Ghost is gone
+				if (m_climbGhost != null) 
+				{
+					CameraFollow cam = FindObjectOfType<CameraFollow>();
+					if (cam != null) cam.SetTarget(transform);
+					Destroy(m_climbGhost);
+				}
+				
+				return; // Stop processing
+			}
+
 			// if this instance is currently playable
 			if (isCurrentlyPlayable)
 			{
@@ -583,6 +610,25 @@ namespace SwampPreachers
 			// Decrease Health
 			currentHealth--;
 			
+			// Critical Fix: If dead, immediately stop climbing so we fall.
+			// This allows the "Wait for Landing" death logic to actually happen (otherwise we hang forever).
+			if (currentHealth <= 0)
+			{
+				m_isWallClimbing = false;
+				m_isLedgeClimbing = false;
+				m_wallGrabbing = false;
+				m_rb.gravityScale = m_defaultGravity > 0.1f ? m_defaultGravity : 3f; // Ensure gravity
+				StopAllCoroutines(); // Stop any ledge climb routine
+				
+				// Also destroy ghost if it exists
+				if (m_climbGhost != null) 
+				{
+					if (Camera.main && Camera.main.GetComponent<CameraFollow>()) 
+						Camera.main.GetComponent<CameraFollow>().SetTarget(transform);
+					Destroy(m_climbGhost);
+				}
+			}
+			
 			// Apply Hurt state immediately to disable inputs / enable physics (even if dead)
 
 			isHurt = true;
@@ -760,13 +806,13 @@ namespace SwampPreachers
 
 			// --- GHOST CAMERA LOGIC ---
 			// Create a ghost target for the camera to follow so it moves smoothly while player mimics movement
-			GameObject ghostTarget = new GameObject("ClimbGhostCameraTarget");
-			ghostTarget.transform.position = startPos;
+			m_climbGhost = new GameObject("ClimbGhostCameraTarget");
+			m_climbGhost.transform.position = startPos;
 			
 			CameraFollow cam = FindObjectOfType<CameraFollow>();
 			if (cam != null)
 			{
-				cam.SetTarget(ghostTarget.transform);
+				cam.SetTarget(m_climbGhost.transform);
 			}
 			// --------------------------
 
@@ -784,7 +830,7 @@ namespace SwampPreachers
 				{
 					// Move Ghost to match would-be player position (Linear Lerp for smooth camera)
 					float t = Mathf.Clamp01(stateInfo.normalizedTime);
-					ghostTarget.transform.position = Vector3.Lerp(startPos, targetPos, t);
+					m_climbGhost.transform.position = Vector3.Lerp(startPos, targetPos, t);
 
 					if (stateInfo.normalizedTime >= 1.0f) // Animation finished
 						break;
@@ -802,7 +848,7 @@ namespace SwampPreachers
 			{
 				cam.SetTarget(transform);
 			}
-			Destroy(ghostTarget);
+			if (m_climbGhost != null) Destroy(m_climbGhost);
 
 			// Force Idle Immediately to prevent single-frame flash of "high" LedgeClimb frame
 			if (m_animator != null)
@@ -917,17 +963,34 @@ namespace SwampPreachers
 			}
 		}
 
+		private GameObject m_climbGhost;
+
 		private void Die()
 		{
+			// Cleanup Coroutines first (Stops LedgeClimb floating loop)
+			StopAllCoroutines();
+
+			// RESET PHYSICS (Fixes floating if died on ledge)
+			m_rb.gravityScale = m_defaultGravity;
+			if (m_collider != null) m_collider.enabled = true; // Ensure we fall to ground
+			
+			// Use default death logic
 			isCurrentlyPlayable = false;
 			m_rb.linearVelocity = Vector2.zero;
 			isDashing = false;
-			
-			// Disable physics/collider to prevent further hits
-			// m_rb.simulated = false; // We might want gravity to keep body on ground? 
-			// Instead let's just make sure we don't move and ignore inputs (already done by isCurrentlyPlayable)
-			// But maybe disable collider so enemies walk past?
-			// m_collider.enabled = false; 
+
+			// CLEANUP GHOST CAMERA
+			if (m_climbGhost != null)
+			{
+				CameraFollow cam = FindObjectOfType<CameraFollow>();
+				if (cam != null) cam.SetTarget(transform); // Look back at dead player
+				Destroy(m_climbGhost);
+			}
+
+			// RESET FLAGS (Critical to ensure FixedUpdate doesn't bail out or skip gravity)
+			m_isLedgeClimbing = false;
+			m_isWallClimbing = false;
+			m_wallGrabbing = false;
 
 			if (m_animator != null)
 			{
@@ -935,7 +998,7 @@ namespace SwampPreachers
 			}
 
 			Debug.Log("Player Died. Reloading scene...");
-			StartCoroutine(ReloadScene());
+			StartCoroutine(ReloadScene()); // Restart reload coroutine since we stopped all
 		}
 
 		private System.Collections.IEnumerator ReloadScene()
