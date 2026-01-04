@@ -21,10 +21,27 @@ namespace SwampPreachers
         public CapabilityMode attack = CapabilityMode.Ignore;
         public CapabilityMode airAttack = CapabilityMode.Ignore;
 
+        [Header("Area Settings")]
+        [Tooltip("If true, capabilities will be reverted to their state at entry when the player exits the trigger. Only applies to capabilities not set to 'Ignore'.")]
+        public bool revertOnExit = false;
+
         [Header("Text Popup")]
         [Tooltip("Assign a UI Text object to show a message.")]
         public Text popText;
         [TextArea] public string message;
+
+
+
+        private struct SavedCapabilities
+        {
+            public bool jump;
+            public bool doubleJump;
+            public bool dash;
+            public bool crouch;
+            public bool attack;
+            public bool airAttack;
+        }
+        private SavedCapabilities m_savedCaps;
 
         private void OnTriggerEnter2D(Collider2D other)
         {
@@ -33,6 +50,19 @@ namespace SwampPreachers
                 PlayerController player = other.GetComponent<PlayerController>();
                 if (player != null)
                 {
+                    if (revertOnExit)
+                    {
+                        m_savedCaps = new SavedCapabilities
+                        {
+                            jump = player.enableJump,
+                            doubleJump = player.enableDoubleJump,
+                            dash = player.enableDash,
+                            crouch = player.enableCrouch,
+                            attack = player.enableAttack,
+                            airAttack = player.enableAirAttack
+                        };
+                    }
+
                     ApplyCapability(ref player.enableJump, jump);
                     ApplyCapability(ref player.enableDoubleJump, doubleJump);
                     ApplyCapability(ref player.enableDash, dash);
@@ -53,6 +83,20 @@ namespace SwampPreachers
         {
             if (other.CompareTag("Player"))
             {
+                if (revertOnExit)
+                {
+                    PlayerController player = other.GetComponent<PlayerController>();
+                    if (player != null)
+                    {
+                        if (jump != CapabilityMode.Ignore) player.enableJump = m_savedCaps.jump;
+                        if (doubleJump != CapabilityMode.Ignore) player.enableDoubleJump = m_savedCaps.doubleJump;
+                        if (dash != CapabilityMode.Ignore) player.enableDash = m_savedCaps.dash;
+                        if (crouch != CapabilityMode.Ignore) player.enableCrouch = m_savedCaps.crouch;
+                        if (attack != CapabilityMode.Ignore) player.enableAttack = m_savedCaps.attack;
+                        if (airAttack != CapabilityMode.Ignore) player.enableAirAttack = m_savedCaps.airAttack;
+                    }
+                }
+
                 if (popText != null)
                 {
                     popText.gameObject.SetActive(false);
