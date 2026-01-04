@@ -72,7 +72,7 @@ namespace SwampPreachers
 			
 			if (isClimbing)
 			{
-				float vInput = InputSystem.VerticalRaw();
+				float vInput = GameInput.VerticalRaw();
 				float direction = 0f;
 				if (Mathf.Abs(vInput) > 0.01f)
 				{

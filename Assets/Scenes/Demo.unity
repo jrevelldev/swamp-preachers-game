@@ -267,16 +267,18 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'A/D or Arrow keys to move
+  m_Text: 'Move: Arrow keys or A/D
 
-    Left Shift to Dash
+    Jump: Space
 
-    W, Space or Up
-    Arrow to Jump/Wall Jump
+    Dash: Left Shift
 
-    S to crouch
+    Crouch:
+    C
 
-    Mouse Click or Enter to attack'
+    Attack: Enter or Mouse Click
+
+    Climb: Up/Down Arrow keys or W/S'
 --- !u!222 &373184994
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -654,7 +656,6 @@ GameObject:
   m_Component:
   - component: {fileID: 965201772}
   - component: {fileID: 965201771}
-  - component: {fileID: 965201770}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -662,26 +663,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &965201770
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 965201769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
 --- !u!114 &965201771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1270,6 +1251,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 97890228778602531, guid: e394101aad2c7d04394531e4c300206f,
         type: 3}
+      propertyPath: m_Name
+      value: Text (Pop text)
+      objectReference: {fileID: 0}
+    - target: {fileID: 97890228778602531, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -1282,6 +1268,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.y
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1190095616820536396, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_Text
+      value: This only acts as a placeholder
       objectReference: {fileID: 0}
     - target: {fileID: 1324777785086208690, guid: e394101aad2c7d04394531e4c300206f,
         type: 3}
@@ -4922,7 +4913,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: _GameManger
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8099190036412159358, guid: c178d0cd48290754090db39688a14bc9, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -5077,11 +5069,6 @@ PrefabInstance:
       objectReference: {fileID: 1507583418}
     - target: {fileID: 2644038771920387518, guid: 87bf8c1bb82c18141b66b97e913ccc1e,
         type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2644038771920387518, guid: 87bf8c1bb82c18141b66b97e913ccc1e,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -5130,18 +5117,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2644038771920387519, guid: 87bf8c1bb82c18141b66b97e913ccc1e,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 34f94fd0059e2f449aeddbde907f1b62, type: 2}
-    - target: {fileID: 6752221008601102639, guid: 87bf8c1bb82c18141b66b97e913ccc1e,
-        type: 3}
-      propertyPath: volumeLayer.m_Bits
-      value: 4096
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2644038771920387519, guid: 87bf8c1bb82c18141b66b97e913ccc1e, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

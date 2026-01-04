@@ -255,7 +255,7 @@ namespace SwampPreachers
 				}
 
 				// crouching logic
-				if (enableCrouch && InputSystem.Crouch() && isGrounded)
+				if (enableCrouch && GameInput.Crouch() && isGrounded)
 				{
 					if (!isCrouching)
 					{
@@ -274,7 +274,7 @@ namespace SwampPreachers
 					}
 					// simple check: can strictly only stand up if not holding crouch. 
 					// Ideally we check overhead, but for now just revert.
-					else if(!InputSystem.Crouch())
+					else if(!GameInput.Crouch())
 					{
 						if (CanStand())
 						{
@@ -322,7 +322,7 @@ namespace SwampPreachers
 				{
 					m_rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
 				}
-				else if (m_rb.linearVelocity.y > 0f && !InputSystem.JumpHeld())
+				else if (m_rb.linearVelocity.y > 0f && !GameInput.JumpHeld())
 				{
 					m_rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
 				}
@@ -374,12 +374,12 @@ namespace SwampPreachers
 					// bool isClimbableWall already calculated above
 					
 					// DEBUG: Remove after testing
-					// Debug.Log($"WallGrab: {m_onWall} | Side: {m_onWallSide} | Climbable: {isClimbableWall} | V-Input: {InputSystem.VerticalRaw()}");
+					// Debug.Log($"WallGrab: {m_onWall} | Side: {m_onWallSide} | Climbable: {isClimbableWall} | V-Input: {GameInput.VerticalRaw()}");
 
 					if (isClimbableWall)
 					{
 						// --- CLIMBABLE WALL LOGIC ---
-						float vInput = InputSystem.VerticalRaw();
+						float vInput = GameInput.VerticalRaw();
 						
 						// Ledge Check (Use combined mask!)
 						float dir = m_onRightWall ? 1f : -1f;
@@ -458,7 +458,7 @@ namespace SwampPreachers
 
 			
 			// horizontal input
-			moveInput = InputSystem.HorizontalRaw();
+			moveInput = GameInput.HorizontalRaw();
 
 			if (isGrounded)
 			{
@@ -475,7 +475,7 @@ namespace SwampPreachers
 			if (!isCurrentlyPlayable) return;
 			
 			// Ledge Drop Logic
-			// if (isGrounded && InputSystem.VerticalRaw() < -0.8f && !m_isLedgeClimbing)
+			// if (isGrounded && GameInput.VerticalRaw() < -0.8f && !m_isLedgeClimbing)
 			// {
 			// 	CheckLedgeDrop();
 			// }
@@ -504,7 +504,7 @@ namespace SwampPreachers
 			if (!isDashing && !m_hasDashedInAir && m_dashCooldown <= 0f)
 			{
 				// dash input (left shift)
-				if (enableDash && !isCrouching && !m_wallGrabbing && InputSystem.Dash())
+				if (enableDash && !isCrouching && !m_wallGrabbing && GameInput.Dash())
 				{
 					isDashing = true;
 					m_dashTime = startDashTime; // FIX: Ensure full dash duration is reset on start
@@ -521,7 +521,7 @@ namespace SwampPreachers
 			m_dashCooldown -= Time.deltaTime;
 
 			// Attack Input
-			if (enableAttack && !isCrouching && !m_wallGrabbing && InputSystem.Attack())
+			if (enableAttack && !isCrouching && !m_wallGrabbing && GameInput.Attack())
 			{
 				// Check for air attack capability
 				if (enableAirAttack || isGrounded)
@@ -545,7 +545,7 @@ namespace SwampPreachers
 				m_hasDashedInAir = false;
 			
 			// Jumping
-			if (enableJump && !isCrouching && InputSystem.Jump())
+			if (enableJump && !isCrouching && GameInput.Jump())
 			{
 				m_jumpBufferCounter = jumpBufferTime;
 			}
@@ -856,7 +856,7 @@ namespace SwampPreachers
 			m_climbGhost = new GameObject("ClimbGhostCameraTarget");
 			m_climbGhost.transform.position = startPos;
 			
-			CameraFollow cam = FindObjectOfType<CameraFollow>();
+			CameraFollow cam = FindFirstObjectByType<CameraFollow>();
 			if (cam != null)
 			{
 				cam.SetTarget(m_climbGhost.transform);
@@ -1029,7 +1029,7 @@ namespace SwampPreachers
 			// CLEANUP GHOST CAMERA
 			if (m_climbGhost != null)
 			{
-				CameraFollow cam = FindObjectOfType<CameraFollow>();
+				CameraFollow cam = FindFirstObjectByType<CameraFollow>();
 				if (cam != null) cam.SetTarget(transform); // Look back at dead player
 				Destroy(m_climbGhost);
 			}
