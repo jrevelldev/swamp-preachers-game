@@ -42,7 +42,7 @@ namespace SwampPreachers
 
 		public static bool Dash()
 		{
-			return Actions.Player.Sprint.WasPressedThisFrame();
+			return Actions.Player.Dash.WasPressedThisFrame();
 		}
 
 		public static bool Attack()
