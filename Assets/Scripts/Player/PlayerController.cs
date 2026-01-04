@@ -97,6 +97,8 @@ namespace SwampPreachers
 
 		public Vector2 wallClimbForce = new Vector2(4f, 14f);
 		
+
+
 		// [Header("Climbing")] -> Movable to Animator script if needed, or keep for physics
 		[SerializeField] public float climbSpeed = 3f;
 		[SerializeField] private LayerMask whatIsClimbable;
@@ -106,6 +108,12 @@ namespace SwampPreachers
 		// [SerializeField] private string climbingStateParam = "IsWallClimbing";
 		// [SerializeField] private string climbingSpeedParam = "ClimbSpeed";
 		// [SerializeField] private float climbAnimSpeedMultiplier = 0.5f; // Slower animation
+
+		[Header("Camera Look")]
+		[SerializeField] private float lookDelay = 0.5f;
+		[SerializeField] private float lookDistance = 3f;
+		private float m_lookTimer;
+		private CameraFollow m_cam;
 
 		private Rigidbody2D m_rb;
 		private float m_defaultGravity;
@@ -167,6 +175,7 @@ namespace SwampPreachers
 			m_dustParticle = GetComponentInChildren<ParticleSystem>();
 			m_spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 			m_animator = GetComponentInChildren<Animator>();
+			m_cam = FindFirstObjectByType<CameraFollow>();
 			currentHealth = maxHealth;
 			
 			// Auto-setup shader if possible
@@ -460,6 +469,8 @@ namespace SwampPreachers
 			// horizontal input
 			moveInput = GameInput.HorizontalRaw();
 
+			HandleCameraLook();
+
 			if (isGrounded)
 			{
 				m_extraJumps = extraJumpCount;
@@ -594,6 +605,45 @@ namespace SwampPreachers
 				m_rb.AddForce(new Vector2(-m_onWallSide * wallClimbForce.x, wallClimbForce.y), ForceMode2D.Impulse);
 			}
 
+		}
+
+		private void HandleCameraLook()
+		{
+			if (m_cam == null) return;
+
+			// Only allow looking if grounded and not moving horizontally
+			// Increased threshold to 0.25f to be more forgiving on Gamepad stick drift/angled presses
+			if (isGrounded && Mathf.Abs(moveInput) < 0.25f && !m_wallGrabbing && !isDashing && !isAttacking)
+			{
+				float vInput = GameInput.VerticalRaw();
+
+				if (Mathf.Abs(vInput) > 0.5f)
+				{
+					// Counting down
+					m_lookTimer -= Time.deltaTime;
+					if (m_lookTimer <= 0f)
+					{
+						float yOffset = (vInput > 0) ? lookDistance : -lookDistance;
+						m_cam.SetLookOffset(new Vector3(0f, yOffset, 0f));
+					}
+				}
+				else
+				{
+					// Reset
+					ResetCameraLook();
+				}
+			}
+			else
+			{
+				// Moving or in air, reset immediately
+				ResetCameraLook();
+			}
+		}
+
+		private void ResetCameraLook()
+		{
+			m_lookTimer = lookDelay;
+			if (m_cam != null) m_cam.SetLookOffset(Vector3.zero);
 		}
 
 		void Flip()

@@ -18,7 +18,7 @@ namespace SwampPreachers
 
 		private void FixedUpdate()
 		{
-			Vector3 desiredPosition = target.localPosition + offset;
+			Vector3 desiredPosition = target.localPosition + offset + m_lookOffset;
 			var localPosition = transform.localPosition;
 			Vector3 smoothedPosition = Vector3.Lerp(localPosition, desiredPosition, smoothSpeed);
 			localPosition = smoothedPosition;
@@ -35,6 +35,12 @@ namespace SwampPreachers
 		public void SetTarget(Transform targetToSet)
 		{
 			target = targetToSet;
+		}
+
+		private Vector3 m_lookOffset;
+		public void SetLookOffset(Vector3 offset)
+		{
+			m_lookOffset = offset;
 		}
 	}
 }
