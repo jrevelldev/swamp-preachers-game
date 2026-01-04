@@ -19,10 +19,16 @@ namespace SwampPreachers
 		private int currentHealth;
 		private bool m_hasTriggeredDeath = false;
 
-		[Header("UI")]
+		[Header("Health UI")]
 		[SerializeField] private bool showHealthBar = true;
-		[SerializeField] private Vector2 healthBarOffset = new Vector2(0f, 0.8f);
 		[SerializeField] private Vector2 healthBarSize = new Vector2(1f, 0.15f);
+		[SerializeField] private Vector2 healthBarOffset = new Vector2(0f, 0.8f);
+		[SerializeField] private Vector2 crouchHealthBarOffset = new Vector2(0f, 0.5f); // Lower position for crouching
+		[SerializeField] private float healthBarSmoothSpeed = 10f; // Control the transition speed
+		[SerializeField] private float crouchUiDelay = 0f; // Delay before UI moves down (to match animation)
+		
+		private float m_crouchDelayTimer;
+		private bool m_wasCrouching;
 
 		private Transform m_healthBarRoot;
 		private Transform m_healthBarFill;
@@ -530,6 +536,9 @@ namespace SwampPreachers
 				isAttacking = false;
 				m_attackSlowdownTimer -= Time.deltaTime;
 			}
+
+			// UI Updates
+			if(showHealthBar) UpdateHealthBarPosition();
 			
 			// if has dashed in air once but now grounded
 			if (m_hasDashedInAir && isGrounded)
@@ -712,7 +721,8 @@ namespace SwampPreachers
 			SpriteRenderer bgSr = bg.AddComponent<SpriteRenderer>();
 			bgSr.sprite = sprite;
 			bgSr.color = Color.red;
-			bgSr.sortingOrder = 100;
+			bgSr.sortingLayerName = "UI"; // Render on top of everything (Gameplay Over, Characters, etc.)
+			bgSr.sortingOrder = 0; // Reset order, layer priority handles it (or keep high within UI if needed)
 
 			// Fill (Green)
 			GameObject fill = new GameObject("Fill");
@@ -728,8 +738,11 @@ namespace SwampPreachers
 			SpriteRenderer fillSr = fill.AddComponent<SpriteRenderer>();
 			fillSr.sprite = leftPivotSprite;
 			fillSr.color = Color.green;
-			fillSr.sortingOrder = 101;
+			fillSr.sortingLayerName = "UI";
+			fillSr.sortingOrder = 1; // Above background
 		}
+
+
 
 		private void UpdateHealthBar()
 		{
@@ -740,6 +753,40 @@ namespace SwampPreachers
 				s.x = healthBarSize.x * pct;
 				m_healthBarFill.localScale = s;
 			}
+		}
+
+		private void UpdateHealthBarPosition()
+		{
+			if (m_healthBarRoot == null) return;
+
+
+
+			// Detect Crouch Start for Delay
+			if (isCrouching && !m_wasCrouching)
+			{
+				m_crouchDelayTimer = crouchUiDelay;
+			}
+			m_wasCrouching = isCrouching;
+
+			Vector2 targetLocalPos = healthBarOffset; // Default standing
+
+			if (isCrouching)
+			{
+				// Process Delay
+				if (m_crouchDelayTimer > 0f)
+				{
+					m_crouchDelayTimer -= Time.deltaTime;
+					targetLocalPos = healthBarOffset; // Stay standing during delay
+				}
+				else
+				{
+					targetLocalPos = crouchHealthBarOffset;
+				}
+			}
+			// Ledge Climb UI offset removed as requested
+
+			// Smoothly interpolate with configurable speed
+			m_healthBarRoot.localPosition = Vector3.Lerp(m_healthBarRoot.localPosition, targetLocalPos, healthBarSmoothSpeed * Time.deltaTime);
 		}
 
 

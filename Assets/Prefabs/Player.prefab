@@ -255,8 +255,11 @@ MonoBehaviour:
   maxHealth: 3
   deathDelay: 2
   showHealthBar: 1
-  healthBarOffset: {x: 0, y: 1.2}
   healthBarSize: {x: 1, y: 0.15}
+  healthBarOffset: {x: 0, y: 1.2}
+  crouchHealthBarOffset: {x: 0, y: 0.8}
+  healthBarSmoothSpeed: 10
+  crouchUiDelay: 0.01
   speed: 7
   crouchSpeedDivisor: 2
   jumpForce: 15

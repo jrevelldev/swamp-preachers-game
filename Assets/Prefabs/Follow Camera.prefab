@@ -109,4 +109,4 @@ MonoBehaviour:
   smoothSpeed: 0.125
   offset: {x: 0, y: 2.5, z: -10}
   minCamerabounds: {x: 0.55, y: -10, z: -10}
-  maxCamerabounds: {x: 14, y: 10, z: 10}
+  maxCamerabounds: {x: 100, y: 10, z: 10}

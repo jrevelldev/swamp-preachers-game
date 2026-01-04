@@ -5075,11 +5075,6 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 1507583418}
-    - target: {fileID: 2644038771920387516, guid: 87bf8c1bb82c18141b66b97e913ccc1e,
-        type: 3}
-      propertyPath: maxCamerabounds.x
-      value: 100
-      objectReference: {fileID: 0}
     - target: {fileID: 2644038771920387518, guid: 87bf8c1bb82c18141b66b97e913ccc1e,
         type: 3}
       propertyPath: m_RootOrder
