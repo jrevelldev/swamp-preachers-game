@@ -274,11 +274,12 @@ MonoBehaviour:
     Dash: Left Shift
 
     Crouch:
-    C
+    Down arrow or C
 
     Attack: Enter or Mouse Click
 
-    Climb: Up/Down Arrow keys or W/S'
+    Climb: Up/Down Arrow keys
+    or W/S'
 --- !u!222 &373184994
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -646,6 +647,198 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 0
   m_SpriteSortPoint: 0
+--- !u!1001 &844177409
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 97890228778602531, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_Name
+      value: Text (Pop text)
+      objectReference: {fileID: 0}
+    - target: {fileID: 97890228778602531, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 909259071252529448, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 909259071252529448, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1190095616820536396, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_Text
+      value: This only acts as a placeholder
+      objectReference: {fileID: 0}
+    - target: {fileID: 1324777785086208690, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: jump
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1324777785086208690, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: crouch
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1324777785086208690, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: message
+      value: Press C to Crouch
+      objectReference: {fileID: 0}
+    - target: {fileID: 1324777785086208690, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: revertOnExit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817621080392209605, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 23.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817621080392209605, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817621080392209605, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817621080392209605, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817621080392209605, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817621080392209605, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817621080392209605, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817621080392209605, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817621080392209605, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4817621080392209605, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5215517014745419537, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.17
+      objectReference: {fileID: 0}
+    - target: {fileID: 6147343585296124984, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.52
+      objectReference: {fileID: 0}
+    - target: {fileID: 7846775847725026908, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8640521797814343072, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_Text
+      value: Crouch Area
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 11.066851
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 5.5204535
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_Offset.x
+      value: 0.013695717
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_Offset.y
+      value: 0.26022673
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.newSize.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729897815024689170, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_SpriteTilingProperty.adaptiveTilingThreshold
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9051421169530618890, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      propertyPath: m_Name
+      value: EnableCrouch
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9051421169530618890, guid: e394101aad2c7d04394531e4c300206f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1974652876}
+  m_SourcePrefab: {fileID: 100100000, guid: e394101aad2c7d04394531e4c300206f, type: 3}
 --- !u!1 &965201769
 GameObject:
   m_ObjectHideFlags: 0
@@ -4783,6 +4976,71 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!1 &1974652875 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9051421169530618890, guid: e394101aad2c7d04394531e4c300206f,
+    type: 3}
+  m_PrefabInstance: {fileID: 844177409}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1974652876
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1974652875}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 0
+  m_SpriteSortPoint: 0
 --- !u!1 &2125641310
 GameObject:
   m_ObjectHideFlags: 0
@@ -5133,5 +5391,6 @@ SceneRoots:
   - {fileID: 203670283}
   - {fileID: 1612893338}
   - {fileID: 1393524804}
+  - {fileID: 844177409}
   - {fileID: 576858930}
   - {fileID: 1345972873}
