@@ -20,14 +20,18 @@ namespace SwampPreachers
 			}
 		}
 
+		private const float DEADZONE = 0.25f;
+
 		public static float HorizontalRaw()
 		{
-			return Actions.Player.Move.ReadValue<Vector2>().x;
+			float val = Actions.Player.Move.ReadValue<Vector2>().x;
+			return Mathf.Abs(val) < DEADZONE ? 0f : val;
 		}
 
 		public static float VerticalRaw()
 		{
-			return Actions.Player.Move.ReadValue<Vector2>().y;
+			float val = Actions.Player.Move.ReadValue<Vector2>().y;
+			return Mathf.Abs(val) < DEADZONE ? 0f : val;
 		}
 
 		public static bool Jump()
