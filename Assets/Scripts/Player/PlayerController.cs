@@ -897,9 +897,8 @@ namespace SwampPreachers
 
 			foreach (Collider2D enemyCollider in hitEnemies)
 			{
-				// We need a common interface or check for specific script
-				// For now, looking for SimplePatrolEnemy specifically or generic interface
-				var enemy = enemyCollider.GetComponent<Enemies.SimplePatrolEnemy>();
+				// Use the generic EnemyStats component so we can hit ANY enemy (Patrol, Charger, etc.)
+				var enemy = enemyCollider.GetComponent<Enemies.EnemyStats>();
 				if (enemy != null)
 				{
 					enemy.TakeDamage(attackDamage);

@@ -289,7 +289,7 @@ MonoBehaviour:
   attackPoint: {fileID: 1865938915660024764}
   enemyLayers:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 512
   knockbackForce: {x: 10, y: 10}
   hurtDuration: 0.25
   isHurt: 0
