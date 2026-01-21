@@ -280,8 +280,8 @@ MonoBehaviour:
   whatIsGround:
     serializedVersion: 2
     m_Bits: 256
-  attackSpeedDivisor: 2
-  attackSlowdownDuration: 0.4
+  attackDuration: 0.4
+  attackCooldown: 0.35
   attackDamage: 1
   attackRange: 0.5
   attackKnockback: 5
@@ -373,6 +373,7 @@ GameObject:
   - component: {fileID: 1865938916397552048}
   - component: {fileID: 1865938916397552049}
   - component: {fileID: 1865938916397552050}
+  - component: {fileID: 4063351606160158862}
   m_Layer: 10
   m_Name: _Sprite
   m_TagString: Untagged
@@ -445,7 +446,7 @@ SpriteRenderer:
   m_SortingLayer: 6
   m_SortingOrder: 51
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 29697c9d7181152499925f774a855363, type: 3}
+  m_Sprite: {fileID: -1817572864, guid: 3978aa585cb6cbc4fb2730068c493b6c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -477,6 +478,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4063351606160158862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865938916397552063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a6c08eae720f4b42bec3e6c48e6dfbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SwampPreachers.AnimationEventReceiver
 --- !u!1 &5796272189899729261
 GameObject:
   m_ObjectHideFlags: 0

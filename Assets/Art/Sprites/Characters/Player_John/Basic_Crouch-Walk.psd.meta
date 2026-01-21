@@ -1,31 +1,37 @@
 fileFormatVersion: 2
-guid: 942aa644ff5a1af4294f56a2a6eb6d74
+guid: bf09856b72c4caa4fb6ab27c31aa0b1c
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5753294002256979718
-    second: Basic_Run_psd_0
+      213: -4794662471391989312
+    second: Basic_Crouch-Walk_0
   - first:
-      213: -4015429200524401422
-    second: Basic_Run_psd_1
+      213: -5462029120695337690
+    second: Basic_Crouch-Walk_1
   - first:
-      213: -216578961955240643
-    second: Basic_Run_psd_2
+      213: -4013040890064386867
+    second: Basic_Crouch-Walk_2
   - first:
-      213: 8552057367783007025
-    second: Basic_Run_psd_3
+      213: 1944542899412989730
+    second: Basic_Crouch-Walk_3
   - first:
-      213: 1389829414099236612
-    second: Basic_Run_psd_4
+      213: 7291422513537553322
+    second: Basic_Crouch-Walk_4
   - first:
-      213: 7056853815147156886
-    second: Basic_Run_psd_5
+      213: 1339559536038775223
+    second: Basic_Crouch-Walk_5
   - first:
-      213: -8042899917477754655
-    second: Basic_Run_psd_6
+      213: 5421022750771011503
+    second: Basic_Crouch-Walk_6
   - first:
-      213: 5388078691684554538
-    second: Basic_Run_psd_7
+      213: -486322269860709034
+    second: Basic_Crouch-Walk_7
+  - first:
+      213: 8446160994599221547
+    second: Basic_Crouch-Walk_8
+  - first:
+      213: 3618433807510196028
+    second: Basic_Crouch-Walk_9
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,7 +102,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 2
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -121,7 +127,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Basic_Run_psd_0
+      name: Basic_Crouch-Walk_0
       rect:
         serializedVersion: 2
         x: 0
@@ -136,14 +142,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: af8561356913820b0800000000000000
-      internalID: -5753294002256979718
+      spriteID: 0c1b8cea2efe57db0800000000000000
+      internalID: -4794662471391989312
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_psd_1
+      name: Basic_Crouch-Walk_1
       rect:
         serializedVersion: 2
         x: 96
@@ -158,14 +164,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2f42302ba645648c0800000000000000
-      internalID: -4015429200524401422
+      spriteID: 62d7d1c2479f234b0800000000000000
+      internalID: -5462029120695337690
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_psd_2
+      name: Basic_Crouch-Walk_2
       rect:
         serializedVersion: 2
         x: 192
@@ -180,14 +186,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d35c5d2e49e8efcf0800000000000000
-      internalID: -216578961955240643
+      spriteID: dc4489e8290de48c0800000000000000
+      internalID: -4013040890064386867
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_psd_3
+      name: Basic_Crouch-Walk_3
       rect:
         serializedVersion: 2
         x: 288
@@ -202,14 +208,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 133e7718dd20fa670800000000000000
-      internalID: 8552057367783007025
+      spriteID: 227f402e6776cfa10800000000000000
+      internalID: 1944542899412989730
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_psd_4
+      name: Basic_Crouch-Walk_4
       rect:
         serializedVersion: 2
         x: 384
@@ -224,14 +230,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 40736cd0d7aa94310800000000000000
-      internalID: 1389829414099236612
+      spriteID: aa311baf426503560800000000000000
+      internalID: 7291422513537553322
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_psd_5
+      name: Basic_Crouch-Walk_5
       rect:
         serializedVersion: 2
         x: 480
@@ -246,14 +252,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 695d4b3f72bfee160800000000000000
-      internalID: 7056853815147156886
+      spriteID: 7b9041dfc42179210800000000000000
+      internalID: 1339559536038775223
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_psd_6
+      name: Basic_Crouch-Walk_6
       rect:
         serializedVersion: 2
         x: 576
@@ -268,14 +274,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1e848be5321e16090800000000000000
-      internalID: -8042899917477754655
+      spriteID: faf540358775b3b40800000000000000
+      internalID: 5421022750771011503
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_psd_7
+      name: Basic_Crouch-Walk_7
       rect:
         serializedVersion: 2
         x: 672
@@ -290,8 +296,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a2795b7d50d46ca40800000000000000
-      internalID: 5388078691684554538
+      spriteID: 65d3792e87c3049f0800000000000000
+      internalID: -486322269860709034
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basic_Crouch-Walk_8
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b29b8d6ccaac63570800000000000000
+      internalID: 8446160994599221547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Basic_Crouch-Walk_9
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 0
+        width: 96
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3fc8eb6062473230800000000000000
+      internalID: 3618433807510196028
       vertices: []
       indices: 
       edges: []
@@ -300,7 +350,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 4596efc84c527ee4d9a2d1b5e4d2485a
+    spriteID: f010bed9746526140986eabcb225f7ab
     internalID: 0
     vertices: []
     indices: 
@@ -310,16 +360,18 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":8.0,"y":1.0},"gridSpriteSize":{"x":96.0,"y":96.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":10.0,"y":1.0},"gridSpriteSize":{"x":96.0,"y":96.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Basic_Run_psd_0: -5753294002256979718
-      Basic_Run_psd_1: -4015429200524401422
-      Basic_Run_psd_2: -216578961955240643
-      Basic_Run_psd_3: 8552057367783007025
-      Basic_Run_psd_4: 1389829414099236612
-      Basic_Run_psd_5: 7056853815147156886
-      Basic_Run_psd_6: -8042899917477754655
-      Basic_Run_psd_7: 5388078691684554538
+      Basic_Crouch-Walk_0: -4794662471391989312
+      Basic_Crouch-Walk_1: -5462029120695337690
+      Basic_Crouch-Walk_2: -4013040890064386867
+      Basic_Crouch-Walk_3: 1944542899412989730
+      Basic_Crouch-Walk_4: 7291422513537553322
+      Basic_Crouch-Walk_5: 1339559536038775223
+      Basic_Crouch-Walk_6: 5421022750771011503
+      Basic_Crouch-Walk_7: -486322269860709034
+      Basic_Crouch-Walk_8: 8446160994599221547
+      Basic_Crouch-Walk_9: 3618433807510196028
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

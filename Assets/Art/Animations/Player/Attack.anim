@@ -21,12 +21,20 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: -186509900, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
+      value: {fileID: 1437619761, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
     - time: 0.125
-      value: {fileID: -1128414537, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
+      value: {fileID: -390563121, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
     - time: 0.25
-      value: {fileID: 1203301519, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
+      value: {fileID: -523010765, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
     - time: 0.375
+      value: {fileID: -1733581656, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
+    - time: 0.5
+      value: {fileID: -186509900, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
+    - time: 0.625
+      value: {fileID: -1128414537, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
+    - time: 0.75
+      value: {fileID: 1203301519, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
+    - time: 0.875
       value: {fileID: 2009281390, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
     attribute: m_Sprite
     path: 
@@ -50,6 +58,10 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
+    - {fileID: 1437619761, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
+    - {fileID: -390563121, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
+    - {fileID: -523010765, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
+    - {fileID: -1733581656, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
     - {fileID: -186509900, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
     - {fileID: -1128414537, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
     - {fileID: 1203301519, guid: 7312f9c9e38dce742a9a803d3b75b6e4, type: 3}
@@ -59,7 +71,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.5
+    m_StopTime: 1
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -78,4 +90,11 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0.5
+    functionName: TriggerAttackHit
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

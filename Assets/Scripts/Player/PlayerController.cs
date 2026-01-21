@@ -60,14 +60,20 @@ namespace SwampPreachers
 		[SerializeField] private LayerMask whatIsGround;
 
 		[Header("Combat")]
-		[SerializeField] private float attackSpeedDivisor = 2f;
-		[SerializeField] private float attackSlowdownDuration = 0.4f;
+		// [SerializeField] private float attackSpeedDivisor = 2f; // Deprecated
+		// [SerializeField] private float attackSlowdownDuration = 0.4f; // Deprecated
+		[SerializeField] private float attackDuration = 0.4f; // How long movement is locked
+		[SerializeField] private float attackCooldown = 0.5f; // Min time between attacks
 		[SerializeField] private int attackDamage = 1;
 		[SerializeField] private float attackRange = 0.5f;
 		[SerializeField] private float attackKnockback = 5f;
 		[SerializeField] private float bounceForce = 15f;
 		[SerializeField] private Transform attackPoint;
 		[SerializeField] private LayerMask enemyLayers;
+
+		private float m_currAttackCooldown;
+		private float m_currAttackDuration;
+		public bool attackTriggered { get; private set; } // Consumed by Animator
 
 		[Header("Combat Reaction")]
 		[SerializeField] private Vector2 knockbackForce = new Vector2(5f, 10f);
@@ -308,11 +314,8 @@ namespace SwampPreachers
 					}
 				}
 
-				// Attack Slowdown
-				if (m_attackSlowdownTimer > 0f)
-				{
-					moveInput /= attackSpeedDivisor;
-				}
+				// Attack Slowdown (Deprecated - handled via input override now)
+				// if (m_attackSlowdownTimer > 0f) ...
 
 				// horizontal movement
 				if(m_wallJumping)
@@ -464,10 +467,25 @@ namespace SwampPreachers
 
 		private void Update()
 		{
+			attackTriggered = false;
 
 			
 			// horizontal input
+			// horizontal input
 			moveInput = GameInput.HorizontalRaw();
+
+			// Combat Movement Lock (Ground Only)
+			// If attacking and grounded, stop completely.
+			if (m_currAttackDuration > 0f && isGrounded)
+			{
+				moveInput = 0f;
+			}
+			
+			// Reset One-Shot Trigger at end of frame (handled in LateUpdate? Or just manual reset by Animator? 
+			// Safest: Auto-reset in Update next frame.
+			// Ideally Animator reads it in Update() same frame.
+			// But for safety, I'll reset it at start of Update or use a Coroutine. 
+			// Actually, let's put the reset at the top of Update().
 
 			HandleCameraLook();
 
@@ -532,21 +550,29 @@ namespace SwampPreachers
 			m_dashCooldown -= Time.deltaTime;
 
 			// Attack Input
-			if (enableAttack && !isCrouching && !m_wallGrabbing && GameInput.Attack())
+			if (enableAttack && !isCrouching && !m_wallGrabbing && !m_isLedgeClimbing)
 			{
-				// Check for air attack capability
-				if (enableAirAttack || isGrounded)
+				if (GameInput.Attack() && m_currAttackCooldown <= 0f)
 				{
-					isAttacking = true;
-					m_attackSlowdownTimer = attackSlowdownDuration;
-					CheckAttackHitbox(); // Instant hit for now, can be moved to Animation Event later
+					// Check for air attack capability
+					if (enableAirAttack || isGrounded)
+					{
+						// Start Attack
+						m_currAttackCooldown = attackCooldown;
+						m_currAttackDuration = attackDuration; // Movement lock timer
+						
+						// One-shot trigger for Animator
+						attackTriggered = true; 
+					}
 				}
 			}
-			else
-			{
-				isAttacking = false;
-				m_attackSlowdownTimer -= Time.deltaTime;
-			}
+
+			// Cooldowns
+			m_currAttackCooldown -= Time.deltaTime;
+			m_currAttackDuration -= Time.deltaTime;
+			
+			// Set state for others reading this (like Animator)
+			isAttacking = m_currAttackDuration > 0f;
 
 			// UI Updates
 			if(showHealthBar) UpdateHealthBarPosition();
@@ -1102,6 +1128,12 @@ namespace SwampPreachers
 		{
 			yield return new WaitForSeconds(deathDelay);
 			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+		}
+
+		// Animation Event Hook
+		public void TriggerAttackHit()
+		{
+			CheckAttackHitbox();
 		}
 	}
 }

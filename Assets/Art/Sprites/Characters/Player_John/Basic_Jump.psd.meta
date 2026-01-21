@@ -1,37 +1,25 @@
 fileFormatVersion: 2
-guid: 8c2075fd6f96d9544837d20025b6cdc3
+guid: c625b2617e31bd74e9278a4f029a7279
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1245174031256755117
-    second: Basic_Idle_psd_0
+      213: 3436943334322036579
+    second: Basic_Jump_0
   - first:
-      213: 3824975864021148625
-    second: Basic_Idle_psd_1
+      213: 3227864700716827078
+    second: Basic_Jump_1
   - first:
-      213: -2207717564837700657
-    second: Basic_Idle_psd_2
+      213: 2238163413838920899
+    second: Basic_Jump_2
   - first:
-      213: 8075471072194303141
-    second: Basic_Idle_psd_3
+      213: 5479001010583139065
+    second: Basic_Jump_3
   - first:
-      213: 8790048247517161514
-    second: Basic_Idle_psd_4
+      213: 8403953669121473998
+    second: Basic_Jump_4
   - first:
-      213: 4642610321760980045
-    second: Basic_Idle_psd_5
-  - first:
-      213: -5790476615258545318
-    second: Basic_Idle_psd_6
-  - first:
-      213: 2331645824168501785
-    second: Basic_Idle_psd_7
-  - first:
-      213: -2229772146903537283
-    second: Basic_Idle_psd_8
-  - first:
-      213: -4316268471068397813
-    second: Basic_Idle_psd_9
+      213: -1997952151382634439
+    second: Basic_Jump_5
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -102,7 +90,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 2
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -127,7 +115,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Basic_Idle_psd_0
+      name: Basic_Jump_0
       rect:
         serializedVersion: 2
         x: 0
@@ -142,14 +130,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3546667d0d048bee0800000000000000
-      internalID: -1245174031256755117
+      spriteID: 36f596bb0c972bf20800000000000000
+      internalID: 3436943334322036579
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_psd_1
+      name: Basic_Jump_1
       rect:
         serializedVersion: 2
         x: 96
@@ -164,14 +152,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1d36c61684b051530800000000000000
-      internalID: 3824975864021148625
+      spriteID: 6c1cf35e7ddabcc20800000000000000
+      internalID: 3227864700716827078
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_psd_2
+      name: Basic_Jump_2
       rect:
         serializedVersion: 2
         x: 192
@@ -186,14 +174,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: fcb557f529c9c51e0800000000000000
-      internalID: -2207717564837700657
+      spriteID: 3ccf42f34cd8f0f10800000000000000
+      internalID: 2238163413838920899
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_psd_3
+      name: Basic_Jump_3
       rect:
         serializedVersion: 2
         x: 288
@@ -208,14 +196,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5a4951c8726d11070800000000000000
-      internalID: 8075471072194303141
+      spriteID: 9f270dfd362590c40800000000000000
+      internalID: 5479001010583139065
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_psd_4
+      name: Basic_Jump_4
       rect:
         serializedVersion: 2
         x: 384
@@ -230,14 +218,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a282ec73f468cf970800000000000000
-      internalID: 8790048247517161514
+      spriteID: ecd73d40657d0a470800000000000000
+      internalID: 8403953669121473998
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_psd_5
+      name: Basic_Jump_5
       rect:
         serializedVersion: 2
         x: 480
@@ -252,96 +240,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d4c00237d7ddd6040800000000000000
-      internalID: 4642610321760980045
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Basic_Idle_psd_6
-      rect:
-        serializedVersion: 2
-        x: 576
-        y: 0
-        width: 96
-        height: 96
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a53ee4b923814afa0800000000000000
-      internalID: -5790476615258545318
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Basic_Idle_psd_7
-      rect:
-        serializedVersion: 2
-        x: 672
-        y: 0
-        width: 96
-        height: 96
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9122693068bab5020800000000000000
-      internalID: 2331645824168501785
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Basic_Idle_psd_8
-      rect:
-        serializedVersion: 2
-        x: 768
-        y: 0
-        width: 96
-        height: 96
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: fb39adf331292ac4a9b662a76e5ef01d
-      internalID: -2229772146903537283
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Basic_Idle_psd_9
-      rect:
-        serializedVersion: 2
-        x: 864
-        y: 0
-        width: 96
-        height: 96
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: cc841531e33eac4449cce6c6c9a49b9a
-      internalID: -4316268471068397813
+      spriteID: 9305c9a9a19d544e0800000000000000
+      internalID: -1997952151382634439
       vertices: []
       indices: 
       edges: []
@@ -350,7 +250,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 43a66b3ff36591649a2c8b82b46be861
+    spriteID: 42afad498687bf8478d39f086ed5ea9e
     internalID: 0
     vertices: []
     indices: 
@@ -360,18 +260,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":10.0,"y":1.0},"gridSpriteSize":{"x":96.0,"y":96.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":6.0,"y":1.0},"gridSpriteSize":{"x":96.0,"y":96.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Basic_Idle_psd_0: -1245174031256755117
-      Basic_Idle_psd_1: 3824975864021148625
-      Basic_Idle_psd_2: -2207717564837700657
-      Basic_Idle_psd_3: 8075471072194303141
-      Basic_Idle_psd_4: 8790048247517161514
-      Basic_Idle_psd_5: 4642610321760980045
-      Basic_Idle_psd_6: -5790476615258545318
-      Basic_Idle_psd_7: 2331645824168501785
-      Basic_Idle_psd_8: -2229772146903537283
-      Basic_Idle_psd_9: -4316268471068397813
+      Basic_Jump_0: 3436943334322036579
+      Basic_Jump_1: 3227864700716827078
+      Basic_Jump_2: 2238163413838920899
+      Basic_Jump_3: 5479001010583139065
+      Basic_Jump_4: 8403953669121473998
+      Basic_Jump_5: -1997952151382634439
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

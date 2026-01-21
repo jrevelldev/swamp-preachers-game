@@ -1,37 +1,37 @@
 fileFormatVersion: 2
-guid: 5ef93c9645f88234aa05ff5d832d9d26
+guid: d52c373178cf0a44ead107a2955e0b98
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6338716105553253962
-    second: Basic_Idle_0
+      213: -1584439116550943245
+    second: Basic_Crouch-Idle_0
   - first:
-      213: -3927944774319646046
-    second: Basic_Idle_1
+      213: -7329264008384329136
+    second: Basic_Crouch-Idle_1
   - first:
-      213: 8656823112461730952
-    second: Basic_Idle_2
+      213: -8106556486983944912
+    second: Basic_Crouch-Idle_2
   - first:
-      213: -5219282275443188852
-    second: Basic_Idle_3
+      213: 4398539924803432166
+    second: Basic_Crouch-Idle_3
   - first:
-      213: 649427541454607973
-    second: Basic_Idle_4
+      213: 1952970833479273278
+    second: Basic_Crouch-Idle_4
   - first:
-      213: -3463587515869376660
-    second: Basic_Idle_5
+      213: 168529515222391062
+    second: Basic_Crouch-Idle_5
   - first:
-      213: 3498896320305933
-    second: Basic_Idle_6
+      213: 4337951116046090917
+    second: Basic_Crouch-Idle_6
   - first:
-      213: 7981614027138495316
-    second: Basic_Idle_7
+      213: -5478727300031648842
+    second: Basic_Crouch-Idle_7
   - first:
-      213: -9117299722895876304
-    second: Basic_Idle_8
+      213: -1207791066080697372
+    second: Basic_Crouch-Idle_8
   - first:
-      213: 3384309878858467199
-    second: Basic_Idle_9
+      213: -1082177795873625074
+    second: Basic_Crouch-Idle_9
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -64,7 +64,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -78,7 +78,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -102,7 +102,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 2
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -127,221 +127,221 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Basic_Idle_0
+      name: Basic_Crouch-Idle_0
       rect:
         serializedVersion: 2
-        x: 31
-        y: 15
-        width: 34
-        height: 67
+        x: 0
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a469c8bc6b4a7f750800000000000000
-      internalID: 6338716105553253962
+      spriteID: 3fd4fb9a401f20ae0800000000000000
+      internalID: -1584439116550943245
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_1
+      name: Basic_Crouch-Idle_1
       rect:
         serializedVersion: 2
-        x: 127
-        y: 15
-        width: 37
-        height: 63
+        x: 96
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2aa5355f9032d79c0800000000000000
-      internalID: -3927944774319646046
+      spriteID: 05a423b6739394a90800000000000000
+      internalID: -7329264008384329136
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_2
+      name: Basic_Crouch-Idle_2
       rect:
         serializedVersion: 2
-        x: 223
-        y: 15
-        width: 37
-        height: 61
+        x: 192
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8844ca541c6332870800000000000000
-      internalID: 8656823112461730952
+      spriteID: 035fea153d9bf7f80800000000000000
+      internalID: -8106556486983944912
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_3
+      name: Basic_Crouch-Idle_3
       rect:
         serializedVersion: 2
-        x: 319
-        y: 15
-        width: 37
-        height: 61
+        x: 288
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c8b57b56c626197b0800000000000000
-      internalID: -5219282275443188852
+      spriteID: 6ee2844d1c0ca0d30800000000000000
+      internalID: 4398539924803432166
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_4
+      name: Basic_Crouch-Idle_4
       rect:
         serializedVersion: 2
-        x: 415
-        y: 15
-        width: 37
-        height: 61
+        x: 384
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 566d1cb78ea330900800000000000000
-      internalID: 649427541454607973
+      spriteID: e3b0b3230a85a1b10800000000000000
+      internalID: 1952970833479273278
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_5
+      name: Basic_Crouch-Idle_5
       rect:
         serializedVersion: 2
-        x: 511
-        y: 15
-        width: 37
-        height: 63
+        x: 480
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c6fc024518ddeefc0800000000000000
-      internalID: -3463587515869376660
+      spriteID: 619dff083bcb65200800000000000000
+      internalID: 168529515222391062
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_6
+      name: Basic_Crouch-Idle_6
       rect:
         serializedVersion: 2
-        x: 607
-        y: 15
-        width: 35
-        height: 67
+        x: 576
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d0b17484a3e6c0000800000000000000
-      internalID: 3498896320305933
+      spriteID: 5a2cfec7e8f733c30800000000000000
+      internalID: 4337951116046090917
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_7
+      name: Basic_Crouch-Idle_7
       rect:
         serializedVersion: 2
-        x: 703
-        y: 15
-        width: 35
-        height: 69
+        x: 672
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4537dd55ba364ce60800000000000000
-      internalID: 7981614027138495316
+      spriteID: 6bbe0645c86a7f3b0800000000000000
+      internalID: -5478727300031648842
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_8
+      name: Basic_Crouch-Idle_8
       rect:
         serializedVersion: 2
-        x: 799
-        y: 15
-        width: 35
-        height: 69
+        x: 768
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 03f16022538d87180800000000000000
-      internalID: -9117299722895876304
+      spriteID: 4e3ae5fac601d3fe0800000000000000
+      internalID: -1207791066080697372
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_9
+      name: Basic_Crouch-Idle_9
       rect:
         serializedVersion: 2
-        x: 895
-        y: 15
-        width: 35
-        height: 69
+        x: 864
+        y: 0
+        width: 96
+        height: 96
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f77443b67eb77fe20800000000000000
-      internalID: 3384309878858467199
+      spriteID: e0c232d37055bf0f0800000000000000
+      internalID: -1082177795873625074
       vertices: []
       indices: 
       edges: []
@@ -350,7 +350,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: d3adf52a1b1942846a84bf76e578e927
     internalID: 0
     vertices: []
     indices: 
@@ -358,18 +358,20 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":10.0,"y":1.0},"gridSpriteSize":{"x":96.0,"y":96.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Basic_Idle_0: 6338716105553253962
-      Basic_Idle_1: -3927944774319646046
-      Basic_Idle_2: 8656823112461730952
-      Basic_Idle_3: -5219282275443188852
-      Basic_Idle_4: 649427541454607973
-      Basic_Idle_5: -3463587515869376660
-      Basic_Idle_6: 3498896320305933
-      Basic_Idle_7: 7981614027138495316
-      Basic_Idle_8: -9117299722895876304
-      Basic_Idle_9: 3384309878858467199
+      Basic_Crouch-Idle_0: -1584439116550943245
+      Basic_Crouch-Idle_1: -7329264008384329136
+      Basic_Crouch-Idle_2: -8106556486983944912
+      Basic_Crouch-Idle_3: 4398539924803432166
+      Basic_Crouch-Idle_4: 1952970833479273278
+      Basic_Crouch-Idle_5: 168529515222391062
+      Basic_Crouch-Idle_6: 4337951116046090917
+      Basic_Crouch-Idle_7: -5478727300031648842
+      Basic_Crouch-Idle_8: -1207791066080697372
+      Basic_Crouch-Idle_9: -1082177795873625074
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

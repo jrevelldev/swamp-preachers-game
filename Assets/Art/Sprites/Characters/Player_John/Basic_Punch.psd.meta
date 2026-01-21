@@ -1,31 +1,31 @@
 fileFormatVersion: 2
-guid: f16117fb238e13e4097411932f4b5d3c
+guid: c7c02378e2a7d4e409031bf59a309760
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1002572552671798951
-    second: Basic_Run_0
+      213: 4492913601434670592
+    second: Basic_Punch_0
   - first:
-      213: -6943051007803243016
-    second: Basic_Run_1
+      213: 7725736772089203743
+    second: Basic_Punch_1
   - first:
-      213: 2455973333111936494
-    second: Basic_Run_2
+      213: -4269760726481417721
+    second: Basic_Punch_2
   - first:
-      213: 5891940607139907271
-    second: Basic_Run_3
+      213: -2183663299364748728
+    second: Basic_Punch_3
   - first:
-      213: 5415469029309753010
-    second: Basic_Run_4
+      213: 2364922578922394915
+    second: Basic_Punch_4
   - first:
-      213: 4229207175956202832
-    second: Basic_Run_5
+      213: -3997030492169682244
+    second: Basic_Punch_5
   - first:
-      213: 7527027339670894431
-    second: Basic_Run_6
+      213: -7898414838744926755
+    second: Basic_Punch_6
   - first:
-      213: 6789037893603650322
-    second: Basic_Run_7
+      213: -6908886386426884789
+    second: Basic_Punch_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -58,7 +58,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,7 +72,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -96,7 +96,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 2
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -121,177 +121,177 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Basic_Run_0
+      name: Basic_Punch_0
       rect:
         serializedVersion: 2
         x: 14
-        y: 15
-        width: 56
-        height: 71
+        y: 0
+        width: 122
+        height: 97
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 959d07043952612f0800000000000000
-      internalID: -1002572552671798951
+      spriteID: 006d804bd190a5e30800000000000000
+      internalID: 4492913601434670592
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_1
+      name: Basic_Punch_1
       rect:
         serializedVersion: 2
-        x: 131
-        y: 15
-        width: 34
-        height: 65
+        x: 136
+        y: 0
+        width: 122
+        height: 97
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8f5487ee4e355af90800000000000000
-      internalID: -6943051007803243016
+      spriteID: f1ccc8859a4573b60800000000000000
+      internalID: 7725736772089203743
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_2
+      name: Basic_Punch_2
       rect:
         serializedVersion: 2
-        x: 210
-        y: 15
-        width: 56
-        height: 67
+        x: 258
+        y: 0
+        width: 122
+        height: 97
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ee518f1fbbe551220800000000000000
-      internalID: 2455973333111936494
+      spriteID: 70a492ecd33ceb4c0800000000000000
+      internalID: -4269760726481417721
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_3
+      name: Basic_Punch_3
       rect:
         serializedVersion: 2
-        x: 307
-        y: 20
-        width: 59
-        height: 66
+        x: 380
+        y: 0
+        width: 122
+        height: 97
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7c6064ee3c064c150800000000000000
-      internalID: 5891940607139907271
+      spriteID: 8428e4c7cc112b1e0800000000000000
+      internalID: -2183663299364748728
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_4
+      name: Basic_Punch_4
       rect:
         serializedVersion: 2
-        x: 403
-        y: 15
-        width: 51
-        height: 71
+        x: 502
+        y: 0
+        width: 122
+        height: 97
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2b62328c36c972b40800000000000000
-      internalID: 5415469029309753010
+      spriteID: 32558fd3e84e1d020800000000000000
+      internalID: 2364922578922394915
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_5
+      name: Basic_Punch_5
       rect:
         serializedVersion: 2
-        x: 510
-        y: 15
-        width: 39
-        height: 65
+        x: 624
+        y: 0
+        width: 122
+        height: 97
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 055076ce48921ba30800000000000000
-      internalID: 4229207175956202832
+      spriteID: cb242ddc1f1b788c0800000000000000
+      internalID: -3997030492169682244
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_6
+      name: Basic_Punch_6
       rect:
         serializedVersion: 2
-        x: 595
-        y: 15
-        width: 56
-        height: 67
+        x: 746
+        y: 0
+        width: 122
+        height: 97
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f57bcbb4c7f557860800000000000000
-      internalID: 7527027339670894431
+      spriteID: dd53fef3d81336290800000000000000
+      internalID: -7898414838744926755
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Run_7
+      name: Basic_Punch_7
       rect:
         serializedVersion: 2
-        x: 689
-        y: 17
-        width: 59
-        height: 69
+        x: 868
+        y: 0
+        width: 122
+        height: 97
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 21b69ee8ef1873e50800000000000000
-      internalID: 6789037893603650322
+      spriteID: b4d4e77bf64be10a0800000000000000
+      internalID: -6908886386426884789
       vertices: []
       indices: 
       edges: []
@@ -300,7 +300,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 3e9af0bb3b1548148bf16b29f7b92332
     internalID: 0
     vertices: []
     indices: 
@@ -308,16 +308,18 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries: []
+      entries:
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":8.0,"y":1.0},"gridSpriteSize":{"x":122.0,"y":97.0},"gridSpriteOffset":{"x":14.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Basic_Run_0: -1002572552671798951
-      Basic_Run_1: -6943051007803243016
-      Basic_Run_2: 2455973333111936494
-      Basic_Run_3: 5891940607139907271
-      Basic_Run_4: 5415469029309753010
-      Basic_Run_5: 4229207175956202832
-      Basic_Run_6: 7527027339670894431
-      Basic_Run_7: 6789037893603650322
+      Basic_Punch_0: 4492913601434670592
+      Basic_Punch_1: 7725736772089203743
+      Basic_Punch_2: -4269760726481417721
+      Basic_Punch_3: -2183663299364748728
+      Basic_Punch_4: 2364922578922394915
+      Basic_Punch_5: -3997030492169682244
+      Basic_Punch_6: -7898414838744926755
+      Basic_Punch_7: -6908886386426884789
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

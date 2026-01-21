@@ -82,7 +82,7 @@ namespace SwampPreachers
 			}
 
 			// attack animation
-			if(m_controller.isAttacking)
+			if(m_controller.attackTriggered)
 			{
 				m_anim.SetTrigger(Melee);
 			}

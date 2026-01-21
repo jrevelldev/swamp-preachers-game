@@ -1,58 +1,37 @@
 fileFormatVersion: 2
-guid: 3978aa585cb6cbc4fb2730068c493b6c
+guid: 336f431121f19f44ba047ae1e37047c7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2237285443321258136
-    second: Player Idle 48x48_0
+      213: 2072144464157396246
+    second: Basic_Death_0
   - first:
-      213: -5002554111202923218
-    second: Player Idle 48x48_1
+      213: -3895912273566866552
+    second: Basic_Death_1
   - first:
-      213: -2020844409934685739
-    second: Player Idle 48x48_2
+      213: 3444974363415885261
+    second: Basic_Death_2
   - first:
-      213: -9185694857040485984
-    second: Player Idle 48x48_3
+      213: 3266738547454285689
+    second: Basic_Death_3
   - first:
-      213: 1395467955858695640
-    second: Player Idle 48x48_4
+      213: 6082188186556692584
+    second: Basic_Death_4
   - first:
-      213: 4383063090576569991
-    second: Player Idle 48x48_5
+      213: -1052220818646613486
+    second: Basic_Death_5
   - first:
-      213: 6818239589509320238
-    second: Player Idle 48x48_6
+      213: -7989421105535818468
+    second: Basic_Death_6
   - first:
-      213: -7087506356234902099
-    second: Player Idle 48x48_7
+      213: -4693237670155602190
+    second: Basic_Death_7
   - first:
-      213: -8860274237790193237
-    second: Player Idle 48x48_8
+      213: -5013410803256093448
+    second: Basic_Death_8
   - first:
-      213: -1427668651449712053
-    second: Player Idle 48x48_9
-  - first:
-      213: 6065544960069181971
-    second: Player Idle 48x48_10
-  - first:
-      213: -2151354002033325826
-    second: Player Idle 48x48_11
-  - first:
-      213: -8111184701435642853
-    second: Player Idle 48x48_12
-  - first:
-      213: -21784638905573931
-    second: Player Idle 48x48_13
-  - first:
-      213: -3977457104276581132
-    second: Player Idle 48x48_14
-  - first:
-      213: -5116091881767546197
-    second: Player Idle 48x48_15
-  - first:
-      213: 4646468844417410410
-    second: Player Idle 48x48_16
+      213: -1661119158374883225
+    second: Basic_Death_9
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -123,7 +102,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 2
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -148,7 +127,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Basic_Idle_0
+      name: Basic_Death_0
       rect:
         serializedVersion: 2
         x: 0
@@ -161,16 +140,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: fc46501070fd3c441b04237b14c7c21c
-      internalID: -1817572864
+      spriteID: 61dc465596cb1cc10800000000000000
+      internalID: 2072144464157396246
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_1
+      name: Basic_Death_1
       rect:
         serializedVersion: 2
         x: 96
@@ -183,16 +162,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 7540670ce2a8d7a48a11370f4fca80c4
-      internalID: 1815118689
+      spriteID: 88366f9bd60fee9c0800000000000000
+      internalID: -3895912273566866552
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_2
+      name: Basic_Death_2
       rect:
         serializedVersion: 2
         x: 192
@@ -205,16 +184,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 64138c2f880287c47a2b9aebb1ee5df4
-      internalID: 1408985934
+      spriteID: dc53bb76ee10fcf20800000000000000
+      internalID: 3444974363415885261
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_3
+      name: Basic_Death_3
       rect:
         serializedVersion: 2
         x: 288
@@ -227,16 +206,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: fe326b446017f564b8d3d6d7888764f9
-      internalID: 1686802154
+      spriteID: 9779617a669c55d20800000000000000
+      internalID: 3266738547454285689
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_4
+      name: Basic_Death_4
       rect:
         serializedVersion: 2
         x: 384
@@ -249,16 +228,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 8e046b67536b996478cc7b43c28f1e1b
-      internalID: 1726485866
+      spriteID: 868f9cc4ee5486450800000000000000
+      internalID: 6082188186556692584
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_5
+      name: Basic_Death_5
       rect:
         serializedVersion: 2
         x: 480
@@ -271,16 +250,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 2acad73b049e1cc439e26566a70dcaa5
-      internalID: -431844649
+      spriteID: 2124c478db2c561f0800000000000000
+      internalID: -1052220818646613486
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_6
+      name: Basic_Death_6
       rect:
         serializedVersion: 2
         x: 576
@@ -293,16 +272,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 761c130d5496a874290dc76e7a7c5f33
-      internalID: -1905278397
+      spriteID: c15678395dfdf1190800000000000000
+      internalID: -7989421105535818468
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_7
+      name: Basic_Death_7
       rect:
         serializedVersion: 2
         x: 672
@@ -315,16 +294,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 0b908652be8eccb458595b6b097773f8
-      internalID: -2117373694
+      spriteID: 2f6b4ef64354edeb0800000000000000
+      internalID: -4693237670155602190
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_8
+      name: Basic_Death_8
       rect:
         serializedVersion: 2
         x: 768
@@ -337,16 +316,16 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 5b9ade6024748ad448cd5f061cb15902
-      internalID: -396044938
+      spriteID: 8f490d6cf69cc6ab0800000000000000
+      internalID: -5013410803256093448
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Basic_Idle_9
+      name: Basic_Death_9
       rect:
         serializedVersion: 2
         x: 864
@@ -359,10 +338,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 9b948b0c4caa8e44e87f3174e203f7e4
-      internalID: 462188521
+      spriteID: 760287b2de482f8e0800000000000000
+      internalID: -1661119158374883225
       vertices: []
       indices: 
       edges: []
@@ -371,7 +350,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f5c7b157390e0fa46bdb2f4569575630
+    spriteID: 42b8518af39423e478ba2847ce75e2d3
     internalID: 0
     vertices: []
     indices: 
@@ -383,16 +362,16 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":10.0,"y":1.0},"gridSpriteSize":{"x":96.0,"y":96.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Basic_Idle_0: -1817572864
-      Basic_Idle_1: 1815118689
-      Basic_Idle_2: 1408985934
-      Basic_Idle_3: 1686802154
-      Basic_Idle_4: 1726485866
-      Basic_Idle_5: -431844649
-      Basic_Idle_6: -1905278397
-      Basic_Idle_7: -2117373694
-      Basic_Idle_8: -396044938
-      Basic_Idle_9: 462188521
+      Basic_Death_0: 2072144464157396246
+      Basic_Death_1: -3895912273566866552
+      Basic_Death_2: 3444974363415885261
+      Basic_Death_3: 3266738547454285689
+      Basic_Death_4: 6082188186556692584
+      Basic_Death_5: -1052220818646613486
+      Basic_Death_6: -7989421105535818468
+      Basic_Death_7: -4693237670155602190
+      Basic_Death_8: -5013410803256093448
+      Basic_Death_9: -1661119158374883225
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
