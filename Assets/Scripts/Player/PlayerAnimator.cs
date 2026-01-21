@@ -16,7 +16,8 @@ namespace SwampPreachers
 		private static readonly int IsCrouching = Animator.StringToHash("IsCrouching");
 		private static readonly int IsWallClimbing = Animator.StringToHash("IsWallClimbing");
 		private static readonly int ClimbSpeed = Animator.StringToHash("ClimbSpeed");
-		private static readonly int LedgeClimb = Animator.StringToHash("LedgeClimb"); // Trigger?
+		private static readonly int LedgeClimb = Animator.StringToHash("LedgeClimb");
+		private static readonly int InputMagnitude = Animator.StringToHash("InputMagnitude");
 
 		[Header("Climbing Animation")]
 		[SerializeField] private float climbAnimSpeedMultiplier = 0.5f;
@@ -32,6 +33,9 @@ namespace SwampPreachers
 		{
 			// Idle & Running animation
 			m_anim.SetFloat(Move, Mathf.Abs(m_rb.linearVelocity.x));
+			
+			// Normalized Input Speed (0 to 1) for variable animation speed
+			m_anim.SetFloat(InputMagnitude, Mathf.Abs(GameInput.HorizontalRaw()));
 
 			// Jump state (handles transitions to falling/jumping)
 			float verticalVelocity = m_rb.linearVelocity.y;

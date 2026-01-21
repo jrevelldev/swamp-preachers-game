@@ -1042,7 +1042,19 @@ namespace SwampPreachers
 			Vector2 center = (Vector2)transform.position + m_originalColliderOffset + new Vector2(0f, m_originalColliderSize.y / 4f);
 			Vector2 size = new Vector2(m_originalColliderSize.x, m_originalColliderSize.y / 2f);
 			size *= 0.9f;
-			return !Physics2D.OverlapBox(center, size, 0f, whatIsGround | whatIsWall);
+			
+			// Use OverlapBox to get the specific collider we hit
+			Collider2D hit = Physics2D.OverlapBox(center, size, 0f, whatIsGround | whatIsWall);
+			
+			// If we hit nothing, we can stand
+			if (hit == null) return true;
+			
+			// If we hit something, make sure it isn't OURSELF (or a child)
+			if (hit.transform.IsChildOf(transform)) return true;
+			
+			// Otherwise, we are blocked
+			Debug.Log($"CanStand Blocked by: {hit.name} (Layer: {LayerMask.LayerToName(hit.gameObject.layer)})");
+			return false;
 		}
 		
 		private System.Collections.IEnumerator FlashRoutine()
@@ -1084,6 +1096,12 @@ namespace SwampPreachers
 			{
 				Gizmos.DrawWireSphere(attackPoint.position, attackRange);
 			}
+			
+			// CanStand Check Gizmo
+			Gizmos.color = CanStand() ? Color.green : Color.red;
+			Vector2 standCenter = (Vector2)transform.position + m_originalColliderOffset + new Vector2(0f, m_originalColliderSize.y / 4f);
+			Vector2 standSize = new Vector2(m_originalColliderSize.x * 0.9f, m_originalColliderSize.y / 2f);
+			Gizmos.DrawWireCube(standCenter, standSize);
 		}
 
 		private GameObject m_climbGhost;
