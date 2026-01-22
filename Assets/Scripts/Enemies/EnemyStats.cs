@@ -6,16 +6,38 @@ namespace SwampPreachers.Enemies
 	[RequireComponent(typeof(Rigidbody2D))]
 	public class EnemyStats : MonoBehaviour
 	{
+		public enum DamageSource
+		{
+			Attack,
+			Stomp,
+			Hazard,
+			Other
+		}
+
 		[Header("Stats")]
 		[SerializeField] private int maxHealth = 1;
 		[SerializeField] private bool canBeStomped = true;
+		[SerializeField] private bool canBeAttacked = true;
+		[SerializeField] private bool damageOnResist = false; // "Spikes" behavior
 		[SerializeField] private int contactDamage = 1; // Damage dealt to player on touch
+
+		// Public Accessors for Interaction Logic
+		public bool CanBeAttacked => canBeAttacked;
+		public bool DamageOnResist => damageOnResist;
+		public int ContactDamage => contactDamage;
 
 		[Header("UI")]
 		[SerializeField] private bool showHealthBar = true;
 		[SerializeField] private Vector2 healthBarOffset = new Vector2(0f, 0.8f);
 		[SerializeField] private Vector2 healthBarSize = new Vector2(1f, 0.15f);
 
+		[Header("Name Label")]
+		[SerializeField] private bool showNameLabel = false;
+		[SerializeField] private string enemyName = "Enemy";
+		[SerializeField] private Vector2 nameLabelOffset = new Vector2(0f, 1.2f);
+		[SerializeField] private int nameFontSize = 24;
+		[SerializeField] private float nameScale = 0.1f;
+		[SerializeField] private Color nameColor = Color.white;
 		// Public properties for other scripts
 		public bool IsStunned { get; private set; }
 		public bool IsAttacking { get; set; } // Movement scripts can set this to prevent contact damage if needed
@@ -46,6 +68,34 @@ namespace SwampPreachers.Enemies
 
 			if (showHealthBar)
 				CreateHealthBar();
+			
+			if (showNameLabel)
+				CreateNameLabel();
+		}
+
+		private void CreateNameLabel()
+		{
+			GameObject labelObj = new GameObject("NameLabel");
+			labelObj.transform.SetParent(transform);
+			labelObj.transform.localPosition = nameLabelOffset;
+			// Scale down the object so high font size looks crisp
+			labelObj.transform.localScale = new Vector3(nameScale, nameScale, 1f);
+
+			TextMesh textMesh = labelObj.AddComponent<TextMesh>();
+			textMesh.text = enemyName;
+			textMesh.characterSize = 1f; // control size via transform scale + font size
+			textMesh.fontSize = nameFontSize;
+			textMesh.anchor = TextAnchor.MiddleCenter;
+			textMesh.alignment = TextAlignment.Center;
+			textMesh.color = nameColor;
+
+			// Ensure it renders on top of sprites
+			MeshRenderer mr = labelObj.GetComponent<MeshRenderer>();
+			if (mr != null)
+			{
+				mr.sortingLayerName = "UI"; // Or "Foreground" or default, assuming standard layers
+				mr.sortingOrder = 1000; // High order to sit above sprites
+			}
 		}
 
 		private void FixedUpdate()
@@ -57,17 +107,26 @@ namespace SwampPreachers.Enemies
 			}
 		}
 
-		public void TakeDamage(int damage)
+		public void TakeDamage(int damage, DamageSource source = DamageSource.Other)
 		{
 			if (currentHealth <= 0) return;
 
-			currentHealth -= damage;
+			// Check Vulnerabilities
+			// If vulnerable, take health. If not, just play effects (flash/anim).
+			bool isVulnerable = true;
+			if (source == DamageSource.Stomp && !canBeStomped) isVulnerable = false;
+			if (source == DamageSource.Attack && !canBeAttacked) isVulnerable = false;
+
+			if (isVulnerable)
+			{
+				currentHealth -= damage;
+				if (m_spriteRenderer != null) StartCoroutine(FlashRoutine());
+			}
 			
-			// Trigger Hit Anim
+			// Trigger Hit Anim (Always play reaction)
 			if (m_anim != null) m_anim.SetTrigger(HitHash);
 
 			if (showHealthBar) UpdateHealthBar();
-			if (m_spriteRenderer != null) StartCoroutine(FlashRoutine());
 
 			if (currentHealth <= 0)
 			{
@@ -147,7 +206,7 @@ namespace SwampPreachers.Enemies
 
 			if (canBeStomped && isFalling && isAbove && !player.isHurt && !player.isGrounded && !player.isDashing)
 			{
-				TakeDamage(1); 
+				TakeDamage(1, DamageSource.Stomp); 
 				player.Bounce();
 			}
 			else

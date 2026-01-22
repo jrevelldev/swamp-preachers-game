@@ -901,10 +901,24 @@ namespace SwampPreachers
 				var enemy = enemyCollider.GetComponent<Enemies.EnemyStats>();
 				if (enemy != null)
 				{
-					enemy.TakeDamage(attackDamage);
+					// Always try to deal damage (EnemyStats handles "0 damage" logic if invincible)
+					// Always apply knockback (Visual reaction)
+					enemy.TakeDamage(attackDamage, Enemies.EnemyStats.DamageSource.Attack);
+					
 					// Calculate knockback direction
 					float dir = Mathf.Sign(enemyCollider.transform.position.x - transform.position.x);
 					enemy.ApplyKnockback(new Vector2(dir * attackKnockback, 2f)); // minimal y lift
+					
+					// Check for Spikes / Recoil
+					if (!enemy.CanBeAttacked && enemy.DamageOnResist)
+					{
+						// Hit Spikes/Thorns!
+						TakeDamage(enemy.transform.position); // Hurt ourselves
+						
+						// Optional: Bounce back slightly to indicate deflection
+						float recoilDir = Mathf.Sign(transform.position.x - enemyCollider.transform.position.x);
+						m_rb.linearVelocity = new Vector2(recoilDir * 5f, 3f); 
+					}
 				}
 			}
 
