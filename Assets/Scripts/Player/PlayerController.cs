@@ -157,6 +157,10 @@ namespace SwampPreachers
 		private int m_onWallSide = 0;
 		private int m_playerSide = 1;
 
+		[Header("Co-op Input (Optional)")]
+		[Tooltip("If assigned, this player will use a specific gamepad. If null, falls back to GameInput for single-player.")]
+		private PlayerInputHandler m_inputHandler;
+
 
 		void Start()
 		{
@@ -183,6 +187,10 @@ namespace SwampPreachers
 			m_animator = GetComponentInChildren<Animator>();
 			m_cam = FindFirstObjectByType<CameraFollow>();
 			currentHealth = maxHealth;
+			
+			// Co-op Input: Check for PlayerInputHandler component
+			// If not present, we'll fall back to static GameInput (single-player mode)
+			m_inputHandler = GetComponent<PlayerInputHandler>();
 			
 			// Auto-setup shader if possible
 			// Assuming the user didn't assign a material manually, we might want to ensure we can flash.
@@ -270,7 +278,7 @@ namespace SwampPreachers
 				}
 
 				// crouching logic
-				if (enableCrouch && GameInput.Crouch() && isGrounded)
+				if (enableCrouch && GetCrouch() && isGrounded)
 				{
 					if (!isCrouching)
 					{
@@ -289,7 +297,7 @@ namespace SwampPreachers
 					}
 					// simple check: can strictly only stand up if not holding crouch. 
 					// Ideally we check overhead, but for now just revert.
-					else if(!GameInput.Crouch())
+					else if(!GetCrouch())
 					{
 						if (CanStand())
 						{
@@ -334,7 +342,7 @@ namespace SwampPreachers
 				{
 					m_rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
 				}
-				else if (m_rb.linearVelocity.y > 0f && !GameInput.JumpHeld())
+				else if (m_rb.linearVelocity.y > 0f && !GetJumpHeld())
 				{
 					m_rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
 				}
@@ -391,7 +399,7 @@ namespace SwampPreachers
 					if (isClimbableWall)
 					{
 						// --- CLIMBABLE WALL LOGIC ---
-						float vInput = GameInput.VerticalRaw();
+						float vInput = GetVerticalRaw();
 						
 						// Ledge Check (Use combined mask!)
 						float dir = m_onRightWall ? 1f : -1f;
@@ -472,7 +480,7 @@ namespace SwampPreachers
 			
 			// horizontal input
 			// horizontal input
-			moveInput = GameInput.HorizontalRaw();
+			moveInput = GetHorizontalRaw();
 
 			// Combat Movement Lock (Ground Only)
 			// If attacking and grounded, stop completely.
@@ -533,7 +541,7 @@ namespace SwampPreachers
 			if (!isDashing && !m_hasDashedInAir && m_dashCooldown <= 0f)
 			{
 				// dash input (left shift)
-				if (enableDash && !isCrouching && !m_wallGrabbing && GameInput.Dash())
+				if (enableDash && !isCrouching && !m_wallGrabbing && GetDash())
 				{
 					isDashing = true;
 					m_dashTime = startDashTime; // FIX: Ensure full dash duration is reset on start
@@ -552,7 +560,7 @@ namespace SwampPreachers
 			// Attack Input
 			if (enableAttack && !isCrouching && !m_wallGrabbing && !m_isLedgeClimbing)
 			{
-				if (GameInput.Attack() && m_currAttackCooldown <= 0f)
+				if (GetAttack() && m_currAttackCooldown <= 0f)
 				{
 					// Check for air attack capability
 					if (enableAirAttack || isGrounded)
@@ -582,7 +590,7 @@ namespace SwampPreachers
 				m_hasDashedInAir = false;
 			
 			// Jumping
-			if (enableJump && !isCrouching && GameInput.Jump())
+			if (enableJump && !isCrouching && GetJump())
 			{
 				m_jumpBufferCounter = jumpBufferTime;
 			}
@@ -1165,6 +1173,44 @@ namespace SwampPreachers
 		public void TriggerAttackHit()
 		{
 			CheckAttackHitbox();
+		}
+
+		// ===== Input Wrapper Methods (Co-op Support) =====
+		// These methods check if a PlayerInputHandler exists (co-op mode) or fall back to GameInput (single-player)
+		
+		private float GetHorizontalRaw()
+		{
+			return m_inputHandler != null ? m_inputHandler.HorizontalRaw() : GameInput.HorizontalRaw();
+		}
+
+		private float GetVerticalRaw()
+		{
+			return m_inputHandler != null ? m_inputHandler.VerticalRaw() : GameInput.VerticalRaw();
+		}
+
+		private bool GetJump()
+		{
+			return m_inputHandler != null ? m_inputHandler.Jump() : GameInput.Jump();
+		}
+
+		private bool GetJumpHeld()
+		{
+			return m_inputHandler != null ? m_inputHandler.JumpHeld() : GameInput.JumpHeld();
+		}
+
+		private bool GetDash()
+		{
+			return m_inputHandler != null ? m_inputHandler.Dash() : GameInput.Dash();
+		}
+
+		private bool GetAttack()
+		{
+			return m_inputHandler != null ? m_inputHandler.Attack() : GameInput.Attack();
+		}
+
+		private bool GetCrouch()
+		{
+			return m_inputHandler != null ? m_inputHandler.Crouch() : GameInput.Crouch();
 		}
 	}
 }
