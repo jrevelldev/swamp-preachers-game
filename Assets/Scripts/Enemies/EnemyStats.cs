@@ -38,9 +38,11 @@ namespace SwampPreachers.Enemies
 		[SerializeField] private int nameFontSize = 24;
 		[SerializeField] private float nameScale = 0.1f;
 		[SerializeField] private Color nameColor = Color.white;
+		[SerializeField] private Font customFont;
 		// Public properties for other scripts
 		public bool IsStunned { get; private set; }
 		public bool IsAttacking { get; set; } // Movement scripts can set this to prevent contact damage if needed
+		public bool IsDead => currentHealth <= 0;
 
 		private int currentHealth;
 		private Rigidbody2D m_rb;
@@ -108,6 +110,21 @@ namespace SwampPreachers.Enemies
 			labelObj.transform.localScale = new Vector3(nameScale, nameScale, 1f);
 
 			TextMesh textMesh = labelObj.AddComponent<TextMesh>();
+			MeshRenderer mr = labelObj.GetComponent<MeshRenderer>();
+
+			// Assign font and material to prevent "No Font Asset has been assigned" editor warning
+			Font font = customFont;
+			if (font == null) font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+			if (font == null) font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+			if (font != null)
+			{
+				textMesh.font = font;
+				if (mr != null && font.material != null)
+				{
+					mr.sharedMaterial = font.material;
+				}
+			}
+
 			textMesh.text = enemyName;
 			textMesh.characterSize = 1f; // control size via transform scale + font size
 			textMesh.fontSize = nameFontSize;
@@ -116,7 +133,6 @@ namespace SwampPreachers.Enemies
 			textMesh.color = nameColor;
 
 			// Ensure it renders on top of sprites
-			MeshRenderer mr = labelObj.GetComponent<MeshRenderer>();
 			if (mr != null)
 			{
 				mr.sortingLayerName = "UI"; // Or "Foreground" or default, assuming standard layers
@@ -179,12 +195,17 @@ namespace SwampPreachers.Enemies
 			m_rb.simulated = false;
 			Collider2D col = GetComponent<Collider2D>();
 			if (col != null) col.enabled = false;
+
+			var charger = GetComponent<ChargerEnemy>();
+			if (charger != null) charger.OnDeath();
+
+			var patrol = GetComponent<PatrolEnemy>();
+			if (patrol != null) patrol.enabled = false;
 			
-			// Disable this script and potentially others?
+			// Disable this script
 			this.enabled = false; 
 			
-			// Optional: Notify other components?
-			// For now, simpler to just destroy object
+			// Destroy object after death animation
 			Destroy(gameObject, 1.0f);
 		}
 

@@ -132,10 +132,15 @@ namespace SwampPreachers.Enemies
 
 		private void FixedUpdate()
 		{
+			if (m_stats != null && m_stats.IsDead)
+			{
+				return;
+			}
+
 			// Check Stun from Stats
 			if (m_stats != null && m_stats.IsStunned)
 			{
-				m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
+				// Let physics knockback resolve naturally without forcing velocity to zero
 				return;
 			}
 

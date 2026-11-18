@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7697031640905307515}
   - component: {fileID: 4473509758515580024}
   - component: {fileID: 1723252844265736031}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 703131724616872624}
   - component: {fileID: 5406208149546199502}
   - component: {fileID: 3921153189451531587}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: ChargerEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.4, y: 1.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7697031640905307515}
@@ -242,11 +242,11 @@ MonoBehaviour:
   damageOnResist: 0
   contactDamage: 1
   showHealthBar: 1
-  healthBarOffset: {x: 0, y: 0.8}
+  healthBarOffset: {x: 0, y: 1}
   healthBarSize: {x: 1, y: 0.15}
   showNameLabel: 0
   enemyName: Enemy
-  nameLabelOffset: {x: 0, y: 1.2}
+  nameLabelOffset: {x: 0, y: 1.4}
   nameFontSize: 24
   nameScale: 0.1
   nameColor: {r: 1, g: 1, b: 1, a: 1}
@@ -263,12 +263,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SwampPreachers.Enemies.ChargerEnemy
   patrolPoints: []
-  patrolSpeed: 2
-  waitTime: 1
-  detectionRange: 6
-  verticalDetectionThreshold: 0.5
-  chargeSpeed: 8
-  chargeWindupTime: 0.5
+  patrolSpeed: 2.5
+  waitTime: 0.5
+  detectionRange: 8
+  chargeSpeed: 11
+  chargeWindupTime: 0.25
   stunDurationSelf: 2
   playerLayer:
     serializedVersion: 2

@@ -27,6 +27,8 @@ namespace SwampPreachers.Editor
 
 			// Create main object
 			GameObject go = new GameObject("ChargerEnemy");
+			int enemyLayer = LayerMask.NameToLayer("Enemy");
+			if (enemyLayer != -1) go.layer = enemyLayer;
 			
 			// Add Components
 			Rigidbody2D rb = go.AddComponent<Rigidbody2D>();
@@ -45,6 +47,7 @@ namespace SwampPreachers.Editor
 			GameObject visuals = new GameObject("Visuals");
 			visuals.transform.SetParent(go.transform);
 			visuals.transform.localPosition = Vector3.zero;
+			if (enemyLayer != -1) visuals.layer = enemyLayer;
 
 			SpriteRenderer sr = visuals.AddComponent<SpriteRenderer>();
 			// Load placeholder sprite
