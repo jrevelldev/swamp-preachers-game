@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace SwampPreachers
@@ -12,6 +12,12 @@ namespace SwampPreachers
 		[SerializeField] public bool enableCrouch = true;
 		[SerializeField] public bool enableAttack = true;
 		[SerializeField] public bool enableAirAttack = false;
+
+		[Header("Party / Single Player Control")]
+		[Tooltip("If true, this character will auto-activate as playable on Start.")]
+		[SerializeField] public bool autoActivateOnStart = true;
+		[Tooltip("If true, this character does not take damage from hazards or enemies when controlled as an AI companion.")]
+		[SerializeField] public bool protectCompanionFromDamage = false;
 
 		[Header("Health")]
 		[SerializeField] private int maxHealth = 3;
@@ -34,8 +40,8 @@ namespace SwampPreachers
 		private Transform m_healthBarFill;
 
 		[Header("Movement")]
-		[SerializeField] private float speed;
-		[SerializeField] private float crouchSpeedDivisor = 2f;
+		[SerializeField] public float speed;
+		[SerializeField] public float crouchSpeedDivisor = 2f;
 
 		[Header("Jumping")]
 		[SerializeField] private float jumpForce;
@@ -164,9 +170,12 @@ namespace SwampPreachers
 
 		void Start()
 		{
-			// create pools for particles
-			PoolManager.instance.CreatePool(dashEffect, 2);
-			PoolManager.instance.CreatePool(jumpEffect, 2);
+			// create pools for particles if PoolManager exists
+			if (PoolManager.instance != null)
+			{
+				if (dashEffect != null) PoolManager.instance.CreatePool(dashEffect, 2);
+				if (jumpEffect != null) PoolManager.instance.CreatePool(jumpEffect, 2);
+			}
 
 			// if it's the player, make this instance currently playable
 			if (transform.CompareTag("Player"))
@@ -206,7 +215,10 @@ namespace SwampPreachers
 			if (whatIsClimbable.value == 0) Debug.LogWarning("PlayerController: 'What Is Climbable' LayerMask is empty!");
 			
 			if (showHealthBar)
+			{
 				CreateHealthBar();
+				UpdateHealthBar();
+			}
 		}
 
 		private void FixedUpdate()
@@ -243,7 +255,7 @@ namespace SwampPreachers
 			{
 				m_wallJumping = false;
 			}
-			if (!isCurrentlyPlayable)
+			if (currentHealth <= 0)
 			{
 				// Safety enforcement for Death state:
 				// Ensure gravity is ON so we fall (fix 'floating' bug)
@@ -258,100 +270,83 @@ namespace SwampPreachers
 				// Ensure Ghost is gone
 				if (m_climbGhost != null) 
 				{
-					CameraFollow cam = FindObjectOfType<CameraFollow>();
+					CameraFollow cam = FindFirstObjectByType<CameraFollow>();
 					if (cam != null) cam.SetTarget(transform);
 					Destroy(m_climbGhost);
 				}
 				
-				return; // Stop processing
+				return; // Stop processing when dead
 			}
 
-			// if this instance is currently playable
+			if (isHurt)
+			{
+				// let physics handle the knockback force
+				return;
+			}
+
+			// Crouching logic: active player reads keyboard; companion is synchronized via DoCrouch
 			if (isCurrentlyPlayable)
 			{
-				if (isHurt)
-				{
-					// simple friction or air drag while hurt? 
-					// for now just let physics handle the knockback force
-					// maybe slow down x slightly if needed, but linear drag on RB is usually better.
-					return;
-				}
-
-				// crouching logic
 				if (enableCrouch && GetCrouch() && isGrounded)
 				{
 					if (!isCrouching)
 					{
 						isCrouching = true;
-						m_collider.size = new Vector2(m_originalColliderSize.x, m_originalColliderSize.y / 2f);
-						m_collider.offset = new Vector2(m_originalColliderOffset.x, m_originalColliderOffset.y - (m_originalColliderSize.y / 4f));
+						if (m_collider != null)
+						{
+							m_collider.size = new Vector2(m_originalColliderSize.x, m_originalColliderSize.y / 2f);
+							m_collider.offset = new Vector2(m_originalColliderOffset.x, m_originalColliderOffset.y - (m_originalColliderSize.y / 4f));
+						}
 					}
-					moveInput /= crouchSpeedDivisor;
 				}
 				else if (isCrouching) // attempt to stand up
 				{
-					// Stay crouched if hurt (forced crouch from overhead hit)
-					if (isHurt)
-					{
-						moveInput /= crouchSpeedDivisor;
-					}
-					// simple check: can strictly only stand up if not holding crouch. 
-					// Ideally we check overhead, but for now just revert.
-					else if(!GetCrouch())
+					if (!isHurt && !GetCrouch())
 					{
 						if (CanStand())
 						{
 							isCrouching = false;
-							m_collider.size = m_originalColliderSize;
-							m_collider.offset = m_originalColliderOffset;
-						}
-						else
-						{
-							moveInput /= crouchSpeedDivisor;
+							if (m_collider != null)
+							{
+								m_collider.size = m_originalColliderSize;
+								m_collider.offset = m_originalColliderOffset;
+							}
 						}
 					}
-					else
-					{
-						// if still holding crouch button but in air, maybe stay crouched? 
-						// Current requirement was just "crouching system". 
-						// logic here: if button held, stay crouched. if released, stand up.
-						// The if condition above handles "entering" crouch only on ground.
-						// This else-if handles "staying" crouched or standing up.
-						// If user holds crouch in air, isCrouching remains true if it was already true.
-						moveInput /= crouchSpeedDivisor;
-					}
 				}
+			}
 
-				// Attack Slowdown (Deprecated - handled via input override now)
-				// if (m_attackSlowdownTimer > 0f) ...
+			// Calculate target horizontal speed based on crouch state (without modifying moveInput)
+			float currentSpeed = isCrouching ? (speed / Mathf.Max(1f, crouchSpeedDivisor)) : speed;
 
-				// horizontal movement
-				if(m_wallJumping)
-				{
-					m_rb.linearVelocity = Vector2.Lerp(m_rb.linearVelocity, (new Vector2(moveInput * speed, m_rb.linearVelocity.y)), 1.5f * Time.fixedDeltaTime);
-				}
-				else
-				{
-					if(canMove && !m_wallGrabbing)
-						m_rb.linearVelocity = new Vector2(moveInput * speed, m_rb.linearVelocity.y);
-					else if(!canMove)
-						m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
-				}
-				// better jump physics
-				if (m_rb.linearVelocity.y < 0f)
-				{
-					m_rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
-				}
-				else if (m_rb.linearVelocity.y > 0f && !GetJumpHeld())
-				{
-					m_rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
-				}
+			// Horizontal movement (applied to both active player and companion)
+			if (m_wallJumping)
+			{
+				m_rb.linearVelocity = Vector2.Lerp(m_rb.linearVelocity, (new Vector2(moveInput * currentSpeed, m_rb.linearVelocity.y)), 1.5f * Time.fixedDeltaTime);
+			}
+			else
+			{
+				if (canMove && !m_wallGrabbing)
+					m_rb.linearVelocity = new Vector2(moveInput * currentSpeed, m_rb.linearVelocity.y);
+				else if (!canMove)
+					m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
+			}
 
-				// Flipping
-				if (!m_facingRight && moveInput > 0f)
-					Flip();
-				else if (m_facingRight && moveInput < 0f)
-					Flip();
+			// Jump and Fall physics (applied to both active player and companion)
+			if (m_rb.linearVelocity.y < 0f)
+			{
+				m_rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+			}
+			else if (m_rb.linearVelocity.y > 0f && isCurrentlyPlayable && !GetJumpHeld())
+			{
+				m_rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
+			}
+
+			// Flipping (applied to both active player and companion)
+			if (!m_facingRight && moveInput > 0f)
+				Flip();
+			else if (m_facingRight && moveInput < 0f)
+				Flip();
 
 
 				// Dashing logic
@@ -382,6 +377,29 @@ namespace SwampPreachers
 				// Allow grab if falling OR if it's a climbable wall (can grab while jumping up)
 				bool canGrab = m_onWall && !isGrounded && m_playerSide == m_onWallSide && !m_isLedgeClimbing;
 				bool isFalling = m_rb.linearVelocity.y <= 0f;
+
+				// For AI companion: strictly refuse to latch onto walls if simply running past them!
+				// Companion ONLY grabs a wall if the leader is climbing or the leader is clearly above on a ledge.
+				// If already actively climbing, keep attached to complete the ascent!
+				if (!isCurrentlyPlayable && canGrab)
+				{
+					if (m_isWallClimbing || actuallyWallGrabbing)
+					{
+						// Already climbing: maintain grab
+					}
+					else if (CharacterSwitcher.Instance != null && CharacterSwitcher.Instance.ActiveCharacter != null)
+					{
+						PlayerController leader = CharacterSwitcher.Instance.ActiveCharacter;
+						float dy = leader.transform.position.y - transform.position.y;
+						bool leaderClimbing = leader.isWallClimbing || leader.actuallyWallGrabbing;
+						bool leaderAbove = dy > 0.8f;
+
+						if (!leaderClimbing && !leaderAbove)
+						{
+							canGrab = false; // Never latch onto walls passed by on the ground!
+						}
+					}
+				}
 
 				if(canGrab && (isFalling || isClimbableWall))
 				{
@@ -460,63 +478,30 @@ namespace SwampPreachers
 					m_wallGrabbing = false;
 
 				// enable/disable dust particles
-				float playerVelocityMag = m_rb.linearVelocity.sqrMagnitude;
-				if(m_dustParticle.isPlaying && playerVelocityMag == 0f)
+				if (m_dustParticle != null)
 				{
-					m_dustParticle.Stop();
+					float playerVelocityMag = m_rb.linearVelocity.sqrMagnitude;
+					if(m_dustParticle.isPlaying && playerVelocityMag == 0f)
+					{
+						m_dustParticle.Stop();
+					}
+					else if(!m_dustParticle.isPlaying && playerVelocityMag > 0f)
+					{
+						m_dustParticle.Play();
+					}
 				}
-				else if(!m_dustParticle.isPlaying && playerVelocityMag > 0f)
-				{
-					m_dustParticle.Play();
-				}
-
-			}
 		}
 
 		private void Update()
 		{
 			attackTriggered = false;
 
-			
-			// horizontal input
-			// horizontal input
-			moveInput = GetHorizontalRaw();
-
-			// Combat Movement Lock (Ground Only)
-			// If attacking and grounded, stop completely.
-			if (m_currAttackDuration > 0f && isGrounded)
-			{
-				moveInput = 0f;
-			}
-			
-			// Reset One-Shot Trigger at end of frame (handled in LateUpdate? Or just manual reset by Animator? 
-			// Safest: Auto-reset in Update next frame.
-			// Ideally Animator reads it in Update() same frame.
-			// But for safety, I'll reset it at start of Update or use a Coroutine. 
-			// Actually, let's put the reset at the top of Update().
-
-			HandleCameraLook();
-
-			if (isGrounded)
-			{
-				m_extraJumps = extraJumpCount;
-				// isHurt = false; // REMOVED: This was cancelling knockback instantly on ground hits.
-				// We now rely purely on m_hurtTimer to reset isHurt.
-			}
-
 			// grounded remember offset (for more responsive jump)
 			m_groundedRemember -= Time.deltaTime;
 			if (isGrounded)
 				m_groundedRemember = coyoteTime;
 
-			if (!isCurrentlyPlayable) return;
-			
-			// Ledge Drop Logic
-			// if (isGrounded && GameInput.VerticalRaw() < -0.8f && !m_isLedgeClimbing)
-			// {
-			// 	CheckLedgeDrop();
-			// }
-
+			// Handle Hurt state & recovery for both active player and companion
 			if (isHurt)
 			{
 				// Death Check on Landing
@@ -534,7 +519,30 @@ namespace SwampPreachers
 				if (m_hurtTimer <= 0f && currentHealth > 0) // Only recover if alive
 					isHurt = false;
 				else
-					return; // disable input
+					return; // disable input while hurt
+			}
+
+			// UI Updates (Health bar position follows animation/crouch)
+			if (showHealthBar) UpdateHealthBarPosition();
+
+			// If this instance is not currently active/playable (controlled by Companion AI),
+			// skip player input processing (keyboard movement, camera look, dash, attack, manual jump, crouch)
+			if (!isCurrentlyPlayable) return;
+
+			// horizontal player input
+			moveInput = GetHorizontalRaw();
+
+			// Combat Movement Lock (Ground Only)
+			if (m_currAttackDuration > 0f && isGrounded)
+			{
+				moveInput = 0f;
+			}
+
+			HandleCameraLook();
+
+			if (isGrounded)
+			{
+				m_extraJumps = extraJumpCount;
 			}
 
 			// if not currently dashing and hasn't already dashed in air once
@@ -581,9 +589,6 @@ namespace SwampPreachers
 			
 			// Set state for others reading this (like Animator)
 			isAttacking = m_currAttackDuration > 0f;
-
-			// UI Updates
-			if(showHealthBar) UpdateHealthBarPosition();
 			
 			// if has dashed in air once but now grounded
 			if (m_hasDashedInAir && isGrounded)
@@ -700,8 +705,9 @@ namespace SwampPreachers
 		{
 			if (isHurt || currentHealth <= 0) return;
 
-			// Decrease Health
+			// Decrease Health (applies to both active leader and inactive companion)
 			currentHealth--;
+			Debug.Log($"[{gameObject.name}] Took damage! Current health: {currentHealth}/{maxHealth} (IsPlayable: {isCurrentlyPlayable})");
 			
 			// Critical Fix: If dead, immediately stop climbing so we fall.
 			// This allows the "Wait for Landing" death logic to actually happen (otherwise we hang forever).
@@ -830,6 +836,11 @@ namespace SwampPreachers
 
 		private void UpdateHealthBar()
 		{
+			if (m_healthBarFill == null && showHealthBar)
+			{
+				CreateHealthBar();
+			}
+
 			if (m_healthBarFill != null)
 			{
 				float pct = Mathf.Clamp01((float)currentHealth / maxHealth);
@@ -938,7 +949,8 @@ namespace SwampPreachers
 
 			Debug.Log("Ledge Climb Triggered");
 			m_isLedgeClimbing = true;
-			isCurrentlyPlayable = false; // Disable Input
+			bool wasPlayable = isCurrentlyPlayable;
+			isCurrentlyPlayable = false; // Disable Input during animation
 			m_rb.linearVelocity = Vector2.zero; // Freeze
 			m_rb.gravityScale = 0f; // Disable gravity
 			if (m_collider != null) m_collider.enabled = false; // Prevent clipping
@@ -948,17 +960,20 @@ namespace SwampPreachers
 			float dir = m_facingRight ? 1f : -1f;
 			Vector3 targetPos = startPos + new Vector3(dir * ledgeTeleportOffset.x, ledgeTeleportOffset.y, 0f);
 
-			// --- GHOST CAMERA LOGIC ---
-			// Create a ghost target for the camera to follow so it moves smoothly while player mimics movement
-			m_climbGhost = new GameObject("ClimbGhostCameraTarget");
-			m_climbGhost.transform.position = startPos;
-			
-			CameraFollow cam = FindFirstObjectByType<CameraFollow>();
-			if (cam != null)
+			// --- GHOST CAMERA LOGIC (Only for the active leader!) ---
+			CameraFollow cam = null;
+			if (wasPlayable)
 			{
-				cam.SetTarget(m_climbGhost.transform);
+				m_climbGhost = new GameObject("ClimbGhostCameraTarget");
+				m_climbGhost.transform.position = startPos;
+				
+				cam = FindFirstObjectByType<CameraFollow>();
+				if (cam != null)
+				{
+					cam.SetTarget(m_climbGhost.transform);
+				}
 			}
-			// --------------------------
+			// --------------------------------------------------------
 
 			// Wait for the animator to pick up the change
 			yield return null; 
@@ -972,9 +987,11 @@ namespace SwampPreachers
 				
 				if (stateInfo.IsName("LedgeClimb"))
 				{
-					// Move Ghost to match would-be player position (Linear Lerp for smooth camera)
-					float t = Mathf.Clamp01(stateInfo.normalizedTime);
-					m_climbGhost.transform.position = Vector3.Lerp(startPos, targetPos, t);
+					if (m_climbGhost != null)
+					{
+						float t = Mathf.Clamp01(stateInfo.normalizedTime);
+						m_climbGhost.transform.position = Vector3.Lerp(startPos, targetPos, t);
+					}
 
 					if (stateInfo.normalizedTime >= 1.0f) // Animation finished
 						break;
@@ -987,8 +1004,8 @@ namespace SwampPreachers
 			// Teleport Up and Over
 			transform.position = targetPos;
 			
-			// Restore Camera to Player
-			if (cam != null)
+			// Restore Camera to Player if this was the active leader
+			if (cam != null && wasPlayable)
 			{
 				cam.SetTarget(transform);
 			}
@@ -1005,7 +1022,7 @@ namespace SwampPreachers
 			m_rb.gravityScale = m_defaultGravity; // Restore cached default
 			
 			m_isLedgeClimbing = false;
-			isCurrentlyPlayable = true;
+			isCurrentlyPlayable = wasPlayable; // Restore exact prior playable state
 		}
 
 		private void CheckLedgeDrop()
@@ -1175,42 +1192,187 @@ namespace SwampPreachers
 			CheckAttackHitbox();
 		}
 
-		// ===== Input Wrapper Methods (Co-op Support) =====
-		// These methods check if a PlayerInputHandler exists (co-op mode) or fall back to GameInput (single-player)
+		public void SetPlayable(bool playable)
+		{
+			isCurrentlyPlayable = playable;
+			if (!playable && m_rb != null)
+			{
+				m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
+				moveInput = 0f;
+			}
+		}
+
+		// Companion AI Controls (Driven by CharacterSwitcher in Follow mode)
+		public void DoMove(float horizontalInput)
+		{
+			if (m_rb != null && !isCurrentlyPlayable)
+			{
+				moveInput = horizontalInput;
+			}
+		}
+
+		public Vector2 Velocity => m_rb != null ? m_rb.linearVelocity : Vector2.zero;
+
+		public bool DoJump(bool allowAirJump = false)
+		{
+			if (m_rb == null || isCurrentlyPlayable || isCrouching) return false;
+
+			if (isGrounded)
+			{
+				m_rb.linearVelocity = new Vector2(m_rb.linearVelocity.x, jumpForce);
+				if (jumpEffect != null && PoolManager.instance != null && groundCheck != null)
+				{
+					PoolManager.instance.ReuseObject(jumpEffect, groundCheck.position, Quaternion.identity);
+				}
+				return true;
+			}
+			else if (allowAirJump && enableDoubleJump && m_extraJumps > 0 && !m_wallGrabbing && m_rb.linearVelocity.y < 0.5f)
+			{
+				m_extraJumps--;
+				float force = m_extraJumpForce > 0f ? m_extraJumpForce : jumpForce;
+				m_rb.linearVelocity = new Vector2(m_rb.linearVelocity.x, force);
+				if (jumpEffect != null && PoolManager.instance != null && groundCheck != null)
+				{
+					PoolManager.instance.ReuseObject(jumpEffect, groundCheck.position, Quaternion.identity);
+				}
+				return true;
+			}
+			return false;
+		}
+
+		public void DoStop()
+		{
+			if (m_rb != null && !isCurrentlyPlayable)
+			{
+				moveInput = 0f;
+			}
+		}
+
+		public void DoCrouch(bool crouch)
+		{
+			if (m_rb == null || isCurrentlyPlayable) return;
+
+			if (crouch && isGrounded)
+			{
+				if (!isCrouching)
+				{
+					isCrouching = true;
+					if (m_collider != null)
+					{
+						m_collider.size = new Vector2(m_originalColliderSize.x, m_originalColliderSize.y / 2f);
+						m_collider.offset = new Vector2(m_originalColliderOffset.x, m_originalColliderOffset.y - (m_originalColliderSize.y / 4f));
+					}
+				}
+			}
+			else if (!crouch && isCrouching)
+			{
+				if (CanStand())
+				{
+					isCrouching = false;
+					if (m_collider != null)
+					{
+						m_collider.size = m_originalColliderSize;
+						m_collider.offset = m_originalColliderOffset;
+					}
+				}
+			}
+		}
+
+		// ===== Input Wrapper Methods (Keyboard First & Co-op Support) =====
+		// Direct Keyboard input always works with zero friction; gamepads work simultaneously
 		
 		private float GetHorizontalRaw()
 		{
-			return m_inputHandler != null ? m_inputHandler.HorizontalRaw() : GameInput.HorizontalRaw();
+			float kVal = GameInput.HorizontalRaw();
+			if (Mathf.Abs(kVal) > 0f) return kVal;
+
+			if (m_inputHandler != null && m_inputHandler.IsGamepadConnected)
+			{
+				return m_inputHandler.HorizontalRaw();
+			}
+			return 0f;
 		}
 
-		private float GetVerticalRaw()
+		public float GetVerticalRaw()
 		{
-			return m_inputHandler != null ? m_inputHandler.VerticalRaw() : GameInput.VerticalRaw();
+			if (isCurrentlyPlayable)
+			{
+				float kVal = GameInput.VerticalRaw();
+				if (Mathf.Abs(kVal) > 0f) return kVal;
+
+				if (m_inputHandler != null && m_inputHandler.IsGamepadConnected)
+				{
+					return m_inputHandler.VerticalRaw();
+				}
+				return 0f;
+			}
+			else
+			{
+				// Inactive companion:
+				if (CharacterSwitcher.Instance != null && CharacterSwitcher.Instance.ActiveCharacter != null)
+				{
+					PlayerController leader = CharacterSwitcher.Instance.ActiveCharacter;
+					float dy = leader.transform.position.y - transform.position.y;
+
+					// If companion is currently on or climbing a wall:
+					// Must continue climbing UP (+1f) to clear the top ledge and cross over the wall to the leader,
+					// even if leader is at the same height on the platform, unless leader dropped far below.
+					if (m_isWallClimbing || actuallyWallGrabbing || m_onWall)
+					{
+						if (dy < -1.5f)
+						{
+							return -1f; // Leader dropped far below: slide/climb down
+						}
+						return 1f; // Climb UP to clear the ledge and reach the other side!
+					}
+
+					// If not yet on wall:
+					if (dy > 0.6f) return 1f;
+					if ((leader.isWallClimbing || leader.actuallyWallGrabbing) && dy > 0.1f) return 1f;
+					if (dy < -0.8f) return -1f;
+				}
+				return 0f;
+			}
 		}
 
 		private bool GetJump()
 		{
-			return m_inputHandler != null ? m_inputHandler.Jump() : GameInput.Jump();
+			if (GameInput.Jump()) return true;
+			if (m_inputHandler != null && m_inputHandler.IsGamepadConnected)
+				return m_inputHandler.Jump();
+			return false;
 		}
 
 		private bool GetJumpHeld()
 		{
-			return m_inputHandler != null ? m_inputHandler.JumpHeld() : GameInput.JumpHeld();
+			if (GameInput.JumpHeld()) return true;
+			if (m_inputHandler != null && m_inputHandler.IsGamepadConnected)
+				return m_inputHandler.JumpHeld();
+			return false;
 		}
 
 		private bool GetDash()
 		{
-			return m_inputHandler != null ? m_inputHandler.Dash() : GameInput.Dash();
+			if (GameInput.Dash()) return true;
+			if (m_inputHandler != null && m_inputHandler.IsGamepadConnected)
+				return m_inputHandler.Dash();
+			return false;
 		}
 
 		private bool GetAttack()
 		{
-			return m_inputHandler != null ? m_inputHandler.Attack() : GameInput.Attack();
+			if (GameInput.Attack()) return true;
+			if (m_inputHandler != null && m_inputHandler.IsGamepadConnected)
+				return m_inputHandler.Attack();
+			return false;
 		}
 
 		private bool GetCrouch()
 		{
-			return m_inputHandler != null ? m_inputHandler.Crouch() : GameInput.Crouch();
+			if (GameInput.Crouch()) return true;
+			if (m_inputHandler != null && m_inputHandler.IsGamepadConnected)
+				return m_inputHandler.Crouch();
+			return false;
 		}
 	}
 }

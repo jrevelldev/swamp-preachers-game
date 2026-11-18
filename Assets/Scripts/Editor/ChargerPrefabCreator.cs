@@ -14,6 +14,7 @@ namespace SwampPreachers.Editor
 
 		private static void CreateChargerEnemy()
 		{
+			if (EditorApplication.isPlayingOrWillChangePlaymode) return;
 			string path = "Assets/Prefabs/Enemies/ChargerEnemy.prefab";
 			if (System.IO.File.Exists(path)) return;
 

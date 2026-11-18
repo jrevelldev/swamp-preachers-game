@@ -1,5 +1,6 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace SwampPreachers.Enemies
 {
@@ -8,27 +9,24 @@ namespace SwampPreachers.Enemies
 	public class ChargerEnemy : MonoBehaviour
 	{
 		[Header("Patrol Settings")]
+		[Tooltip("Optional waypoints. If empty, uses autonomous ground patrol.")]
 		[SerializeField] private Transform[] patrolPoints;
 		[SerializeField] private float patrolSpeed = 2f;
 		[SerializeField] private float waitTime = 1f;
 
-		[Header("Charger Settings")]
-		[SerializeField] private float detectionRange = 6f;
-		[SerializeField] private float verticalDetectionThreshold = 1.5f; // Increased for better detection
-		[SerializeField] private float chargeSpeed = 8f;
-		[SerializeField] private float chargeWindupTime = 0.5f;
-		[SerializeField] private float stunDurationSelf = 2.0f;
+		[Header("Charger Detection")]
+		[SerializeField] private float detectionRange = 7f;
+		[SerializeField] private float detectionBoxHeight = 1.8f;
+		[SerializeField] private Vector2 detectionOffset = new Vector2(0f, 0.5f);
 		[SerializeField] private LayerMask playerLayer;
 		[SerializeField] private LayerMask obstacleLayer;
 
-		private void Reset()
-		{
-			playerLayer = LayerMask.GetMask("Player");
-			obstacleLayer = LayerMask.GetMask("Ground", "Obstacle", "Default");
-			if (GetComponent<BoxCollider2D>() == null) gameObject.AddComponent<BoxCollider2D>();
-			if (GetComponent<Rigidbody2D>() == null) gameObject.AddComponent<Rigidbody2D>();
-			if (GetComponent<EnemyStats>() == null) gameObject.AddComponent<EnemyStats>();
-		}
+		[Header("Charge Behavior")]
+		[SerializeField] private float chargeSpeed = 9f;
+		[SerializeField] private float chargeWindupTime = 0.5f;
+		[SerializeField] private float maxChargeDuration = 2.0f;
+		[SerializeField] private float stunDurationSelf = 1.5f;
+		[SerializeField] private float wallCheckDistance = 0.5f;
 
 		private enum State
 		{
@@ -40,9 +38,11 @@ namespace SwampPreachers.Enemies
 
 		private State m_state = State.Patrol;
 		private float m_facingDirection = 1f;
+		private List<Transform> m_validPatrolPoints = new List<Transform>();
 		private int m_currentPointIndex = 0;
 		private float m_waitTimer = 0f;
 		private bool m_isWaiting;
+		private float m_chargeTimer = 0f;
 
 		private Rigidbody2D m_rb;
 		private Animator m_anim;
@@ -51,40 +51,63 @@ namespace SwampPreachers.Enemies
 
 		private static readonly int SpeedHash = Animator.StringToHash("Speed");
 		private static readonly int ChargeHash = Animator.StringToHash("Charge");
-		private static readonly int StunnedHash = Animator.StringToHash("Stunned");
+		private static readonly int StunnedHash = Animator.StringToHash("IsStunned");
+
+		private bool HasParameter(int paramHash)
+		{
+			if (m_anim == null || m_anim.runtimeAnimatorController == null) return false;
+			foreach (var p in m_anim.parameters)
+			{
+				if (p.nameHash == paramHash) return true;
+			}
+			return false;
+		}
+
+		private void SafeSetBool(int hash, bool value)
+		{
+			if (HasParameter(hash))
+			{
+				m_anim.SetBool(hash, value);
+			}
+		}
+
+		private void SafeSetFloat(int hash, float value)
+		{
+			if (HasParameter(hash))
+			{
+				m_anim.SetFloat(hash, value);
+			}
+		}
 
 		private void Start()
 		{
 			m_rb = GetComponent<Rigidbody2D>();
 			m_stats = GetComponent<EnemyStats>();
 			m_anim = GetComponent<Animator>();
-			if(m_anim == null) m_anim = GetComponentInChildren<Animator>();
+			if (m_anim == null) m_anim = GetComponentInChildren<Animator>();
 			m_spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
-			m_facingDirection = transform.localScale.x > 0 ? 1f : -1f;
-
-			if (patrolPoints != null && patrolPoints.Length > 0)
+			// Validate and filter patrol points
+			m_validPatrolPoints.Clear();
+			if (patrolPoints != null)
 			{
-				m_currentPointIndex = 0;
+				foreach (var p in patrolPoints)
+				{
+					if (p != null) m_validPatrolPoints.Add(p);
+				}
 			}
 
 			// Validate Layers
-			if (playerLayer == 0) 
-			{
-				playerLayer = LayerMask.GetMask("Player");
-				if (playerLayer == 0) Debug.LogWarning("ChargerEnemy: Player Layer is empty! Please set it in Inspector.");
-			}
-			if (obstacleLayer == 0) 
-			{
-				obstacleLayer = LayerMask.GetMask("Ground", "Default");
-			}
+			if (playerLayer == 0) playerLayer = LayerMask.GetMask("Player");
+			if (obstacleLayer == 0) obstacleLayer = LayerMask.GetMask("Ground", "Default");
+
+			m_facingDirection = transform.localScale.x < 0 ? -1f : 1f;
 		}
 
 		private void FixedUpdate()
 		{
-			if (m_stats.IsStunned)
+			if (m_stats != null && m_stats.IsStunned && m_state != State.Stunned)
 			{
-				// If stats say we are stunned (e.g. from damage), ensure we respect that overlay
 				m_rb.linearVelocity = Vector2.zero;
 				return;
 			}
@@ -96,135 +119,183 @@ namespace SwampPreachers.Enemies
 					CheckForPlayer();
 					break;
 				case State.Windup:
-					m_rb.linearVelocity = Vector2.zero;
+					m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
 					break;
 				case State.Charging:
 					HandleCharging();
 					break;
 				case State.Stunned:
-					// Handled by coroutine mostly, but ensure no movement
-					m_rb.linearVelocity = Vector2.zero;
+					m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
 					break;
 			}
 			
-			if (m_anim != null)
-			{
-				m_anim.SetFloat(SpeedHash, Mathf.Abs(m_rb.linearVelocity.x));
-			}
+			SafeSetFloat(SpeedHash, Mathf.Abs(m_rb.linearVelocity.x));
 		}
 
 		private void HandlePatrol()
 		{
-			if (patrolPoints == null || patrolPoints.Length == 0) return;
-
-			if (m_isWaiting)
+			if (m_validPatrolPoints != null && m_validPatrolPoints.Count >= 2)
 			{
-				m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
-				m_waitTimer -= Time.deltaTime;
-				if (m_waitTimer <= 0f)
+				// Waypoint Patrol
+				if (m_isWaiting)
 				{
-					m_isWaiting = false;
-					m_currentPointIndex = (m_currentPointIndex + 1) % patrolPoints.Length;
+					m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
+					m_waitTimer -= Time.fixedDeltaTime;
+					if (m_waitTimer <= 0f)
+					{
+						m_isWaiting = false;
+						m_currentPointIndex = (m_currentPointIndex + 1) % m_validPatrolPoints.Count;
+					}
+					return;
 				}
-				return;
-			}
 
-			Transform target = patrolPoints[m_currentPointIndex];
-			if (target != null)
+				Transform target = m_validPatrolPoints[m_currentPointIndex];
+				if (target != null)
+				{
+					float dist = Mathf.Abs(transform.position.x - target.position.x);
+					if (dist < 0.25f)
+					{
+						m_isWaiting = true;
+						m_waitTimer = waitTime;
+						m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
+					}
+					else
+					{
+						float dirX = Mathf.Sign(target.position.x - transform.position.x);
+						TurnToFace(dirX);
+						m_rb.linearVelocity = new Vector2(dirX * patrolSpeed, m_rb.linearVelocity.y);
+					}
+				}
+			}
+			else
 			{
-				float dist = Mathf.Abs(transform.position.x - target.position.x);
-				if (dist < 0.2f)
+				// Autonomous Ground Patrol
+				if (m_isWaiting)
+				{
+					m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
+					m_waitTimer -= Time.fixedDeltaTime;
+					if (m_waitTimer <= 0f)
+					{
+						m_isWaiting = false;
+						TurnToFace(-m_facingDirection);
+					}
+					return;
+				}
+
+				Vector2 origin = (Vector2)transform.position + Vector2.up * 0.3f;
+				Vector2 forward = Vector2.right * m_facingDirection;
+
+				RaycastHit2D wallHit = Physics2D.Raycast(origin, forward, 0.5f, obstacleLayer);
+				Vector2 ledgeOrigin = origin + forward * 0.5f;
+				RaycastHit2D groundHit = Physics2D.Raycast(ledgeOrigin, Vector2.down, 1.0f, obstacleLayer);
+
+				if (wallHit.collider != null || groundHit.collider == null)
 				{
 					m_isWaiting = true;
 					m_waitTimer = waitTime;
 					m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
+					return;
 				}
-				else
-				{
-					float dirX = Mathf.Sign(target.position.x - transform.position.x);
-					TurnToFace(dirX);
-					m_rb.linearVelocity = new Vector2(dirX * patrolSpeed, m_rb.linearVelocity.y);
-				}
+
+				m_rb.linearVelocity = new Vector2(m_facingDirection * patrolSpeed, m_rb.linearVelocity.y);
 			}
 		}
 
 		private void CheckForPlayer()
 		{
-			// Raycast for player
-			Vector2 origin = transform.position;
+			Vector2 origin = (Vector2)transform.position + detectionOffset;
+			Vector2 boxSize = new Vector2(0.2f, detectionBoxHeight);
 			Vector2 direction = Vector2.right * m_facingDirection;
 
-			// Visual debug
-			Color rayColor = Color.yellow;
+			// BoxCast forward covering full player height
+			RaycastHit2D hit = Physics2D.BoxCast(origin, boxSize, 0f, direction, detectionRange, playerLayer);
 			
-			RaycastHit2D hit = Physics2D.Raycast(origin, direction, detectionRange, playerLayer);
 			if (hit.collider != null)
 			{
-				rayColor = Color.red;
-				// Check vertical alignment
-				float yDiff = Mathf.Abs(hit.transform.position.y - transform.position.y);
-				if (yDiff < verticalDetectionThreshold)
+				// Check line of sight (ensure no obstacle blocks vision)
+				RaycastHit2D blockHit = Physics2D.Linecast(origin, hit.point, obstacleLayer);
+				if (blockHit.collider == null)
 				{
-					Debug.Log($"Charger Detected Player! Y-Diff: {yDiff}");
 					StartCoroutine(WindupRoutine());
 				}
 			}
-			Debug.DrawRay(origin, direction * detectionRange, rayColor);
 		}
 
 		private void HandleCharging()
 		{
+			m_chargeTimer += Time.fixedDeltaTime;
 			m_rb.linearVelocity = new Vector2(m_facingDirection * chargeSpeed, m_rb.linearVelocity.y);
 
-			float wallCheckDist = 0.6f;
-			RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.right * m_facingDirection, wallCheckDist, obstacleLayer);
+			// Wall check during charge (cast slightly above feet)
+			Vector2 wallCheckOrigin = (Vector2)transform.position + Vector2.up * 0.4f;
+			RaycastHit2D hit = Physics2D.Raycast(wallCheckOrigin, Vector2.right * m_facingDirection, wallCheckDistance, obstacleLayer);
 			
 			if (hit.collider != null)
 			{
-				StartCoroutine(StunSelfRoutine());
+				StartCoroutine(StunSelfRoutine(hitWall: true));
+				return;
+			}
+
+			// Max charge duration timeout
+			if (m_chargeTimer >= maxChargeDuration)
+			{
+				StartCoroutine(StunSelfRoutine(hitWall: false));
 			}
 		}
 
 		private IEnumerator WindupRoutine()
 		{
 			m_state = State.Windup;
-			if (m_anim != null) m_anim.SetBool(ChargeHash, true); // Use Charge bool for windup/charge? Or trigger?
-			// Let's assume Charge bool True = Windup+Charge animation loop
+			m_rb.linearVelocity = new Vector2(0f, m_rb.linearVelocity.y);
+
+			SafeSetBool(ChargeHash, true);
 			
 			yield return new WaitForSeconds(chargeWindupTime);
 			
+			m_chargeTimer = 0f;
 			m_state = State.Charging;
-			m_stats.IsAttacking = true; 
+			if (m_stats != null) m_stats.IsAttacking = true; 
 		}
 
-		private IEnumerator StunSelfRoutine()
+		private IEnumerator StunSelfRoutine(bool hitWall)
 		{
 			m_state = State.Stunned;
-			m_stats.IsAttacking = false;
-			if (m_anim != null) 
-			{
-				m_anim.SetBool(ChargeHash, false);
-				m_anim.SetBool(StunnedHash, true);
-			}
+			if (m_stats != null) m_stats.IsAttacking = false;
+
+			SafeSetBool(ChargeHash, false);
+			SafeSetBool(StunnedHash, true);
 			
-			// Small bounce back?
-			m_rb.AddForce(new Vector2(-m_facingDirection * 3f, 2f), ForceMode2D.Impulse);
+			if (hitWall)
+			{
+				// Recoil impulse
+				m_rb.linearVelocity = Vector2.zero;
+				m_rb.AddForce(new Vector2(-m_facingDirection * 4f, 3f), ForceMode2D.Impulse);
+			}
+			else
+			{
+				m_rb.linearVelocity = Vector2.zero;
+			}
 
 			yield return new WaitForSeconds(stunDurationSelf);
 			
-			if (m_anim != null) m_anim.SetBool(StunnedHash, false);
+			SafeSetBool(StunnedHash, false);
 			m_state = State.Patrol;
 		}
 
 		private void TurnToFace(float dir)
 		{
-			if (dir == 0) return;
-			m_facingDirection = dir;
+			if (Mathf.Approximately(dir, 0f)) return;
+			m_facingDirection = dir > 0 ? 1f : -1f;
+			
 			if (m_spriteRenderer != null)
 			{
-				// If 1 (Right), flipX = false? Depends on sprite. Assuming Right-facing sprite is default
-				// If sprite faces Right by default:
-				m_spriteRenderer.flipX = (dir < 0);
+				m_spriteRenderer.flipX = (m_facingDirection < 0);
+			}
+			else
+			{
+				Vector3 s = transform.localScale;
+				s.x = Mathf.Abs(s.x) * m_facingDirection;
+				transform.localScale = s;
 			}
 		}
 
@@ -235,28 +306,35 @@ namespace SwampPreachers.Enemies
 				PlayerController player = collision.gameObject.GetComponent<PlayerController>();
 				if (player != null)
 				{
-					// Deal damage
 					player.TakeDamage(transform.position);
-					// If we hit player, do we stop? Or keep charging? 
-					// Let's stop and stun to be fair/classic
-					StartCoroutine(StunSelfRoutine());
+					StartCoroutine(StunSelfRoutine(hitWall: true));
 				}
 			}
 		}
 		
 		private void OnDrawGizmos()
 		{
-			if (patrolPoints == null || patrolPoints.Length < 2) return;
-
-			Gizmos.color = Color.green;
-			for (int i = 0; i < patrolPoints.Length; i++)
+			// Waypoint Gizmos
+			if (patrolPoints != null && patrolPoints.Length > 0)
 			{
-				Transform p1 = patrolPoints[i];
-				if (p1 != null) Gizmos.DrawSphere(p1.position, 0.2f);
+				Gizmos.color = Color.green;
+				for (int i = 0; i < patrolPoints.Length; i++)
+				{
+					Transform p1 = patrolPoints[i];
+					if (p1 != null) Gizmos.DrawSphere(p1.position, 0.2f);
+				}
 			}
-			
-			Gizmos.color = Color.red;
-			Gizmos.DrawLine(transform.position, transform.position + (Vector3.right * m_facingDirection * detectionRange));
+
+			// Detection BoxCast Gizmo
+			Gizmos.color = m_state == State.Charging ? Color.red : Color.yellow;
+			Vector2 origin = (Vector2)transform.position + detectionOffset;
+			Vector2 target = origin + Vector2.right * m_facingDirection * detectionRange;
+			Gizmos.DrawWireCube(origin + Vector2.right * m_facingDirection * (detectionRange / 2f), new Vector3(detectionRange, detectionBoxHeight, 0.1f));
+
+			// Wall Check Gizmo
+			Gizmos.color = Color.cyan;
+			Vector2 wallCheckOrigin = (Vector2)transform.position + Vector2.up * 0.4f;
+			Gizmos.DrawLine(wallCheckOrigin, wallCheckOrigin + Vector2.right * m_facingDirection * wallCheckDistance);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace SwampPreachers
 {
@@ -31,21 +31,34 @@ namespace SwampPreachers
 
 		private void Update()
 		{
+			float targetSpeed = m_controller.isCrouching 
+				? (m_controller.speed / Mathf.Max(1f, m_controller.crouchSpeedDivisor)) 
+				: m_controller.speed;
+
+			float absVelX = Mathf.Abs(m_rb.linearVelocity.x);
+			if (absVelX < 0.05f) absVelX = 0f;
+
 			// Idle & Running animation
-			m_anim.SetFloat(Move, Mathf.Abs(m_rb.linearVelocity.x));
+			m_anim.SetFloat(Move, absVelX);
 			
-			// Normalized Input Speed (0 to 1) for variable animation speed
-			m_anim.SetFloat(InputMagnitude, Mathf.Abs(GameInput.HorizontalRaw()));
+			// Normalized Input Speed (0 to 1) for variable animation speed (works for active player and companion)
+			float inputMag = 0f;
+			if (m_controller.isCrouching)
+			{
+				// In CrouchWalk, maintain full playback speed (1f) while moving so it never freezes in a single frame
+				inputMag = absVelX > 0.05f ? 1f : 0f;
+			}
+			else if (Mathf.Abs(m_controller.moveInput) > 0.05f || absVelX > 0.05f)
+			{
+				inputMag = Mathf.Clamp01(Mathf.Max(Mathf.Abs(m_controller.moveInput), absVelX / Mathf.Max(0.1f, targetSpeed)));
+			}
+			m_anim.SetFloat(InputMagnitude, inputMag);
 
 			// Jump state (handles transitions to falling/jumping)
 			float verticalVelocity = m_rb.linearVelocity.y;
 			m_anim.SetFloat(JumpState, verticalVelocity);
 
 			// Jump animation
-			// DEBUG STATE
-			// if (m_controller.isWallClimbing) Debug.Log("PlayerAnimator: Wall Climbing is TRUE");
-			// else if (!m_controller.isGrounded) Debug.Log("PlayerAnimator: Air (Not Climbing)");
-
 			if (!m_controller.isGrounded && !m_controller.actuallyWallGrabbing && !m_controller.isWallClimbing)
 			{
 				m_anim.SetBool(IsJumping, true);
@@ -76,7 +89,7 @@ namespace SwampPreachers
 			
 			if (isClimbing)
 			{
-				float vInput = GameInput.VerticalRaw();
+				float vInput = m_controller.GetVerticalRaw();
 				float direction = 0f;
 				if (Mathf.Abs(vInput) > 0.01f)
 				{

@@ -13,6 +13,7 @@ namespace SwampPreachers.Editor
 
         private static void CreateAnims()
         {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
             string dir = "Assets/Art/Animations/Enemies/Charger";
             if (System.IO.Directory.Exists(dir)) return; // Only run if dir doesn't exist to avoid overwriting constantly?
             

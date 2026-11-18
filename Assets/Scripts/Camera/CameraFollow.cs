@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -48,19 +48,20 @@ namespace SwampPreachers
 
 		private void FixedUpdate()
 		{
+			if (target == null) return;
+
 			// Position following
-			Vector3 desiredPosition = target.localPosition + offset + m_lookOffset;
-			var localPosition = transform.localPosition;
-			Vector3 smoothedPosition = Vector3.Lerp(localPosition, desiredPosition, smoothSpeed);
-			localPosition = smoothedPosition;
+			Vector3 desiredPosition = target.position + offset + m_lookOffset;
+			var currentPosition = transform.position;
+			Vector3 smoothedPosition = Vector3.Lerp(currentPosition, desiredPosition, smoothSpeed);
 
 			// clamp camera's position between min and max
-			localPosition = new Vector3(
-				Mathf.Clamp(localPosition.x, minCamerabounds.x, maxCamerabounds.x),
-				Mathf.Clamp(localPosition.y, minCamerabounds.y, maxCamerabounds.y),
-				Mathf.Clamp(localPosition.z, minCamerabounds.z, maxCamerabounds.z)
-				);
-			transform.localPosition = localPosition;
+			smoothedPosition = new Vector3(
+				Mathf.Clamp(smoothedPosition.x, minCamerabounds.x, maxCamerabounds.x),
+				Mathf.Clamp(smoothedPosition.y, minCamerabounds.y, maxCamerabounds.y),
+				Mathf.Clamp(smoothedPosition.z, minCamerabounds.z, maxCamerabounds.z)
+			);
+			transform.position = smoothedPosition;
 
 			// Dynamic Zoom
 			if (enableDynamicZoom && m_camera != null && player1 != null && player2 != null)

@@ -56,6 +56,32 @@ namespace SwampPreachers.Enemies
 		private static readonly int DieHash = Animator.StringToHash("Die");
 		private static readonly int IsStunnedHash = Animator.StringToHash("IsStunned");
 
+		private bool HasParameter(int paramHash)
+		{
+			if (m_anim == null || m_anim.runtimeAnimatorController == null) return false;
+			foreach (var p in m_anim.parameters)
+			{
+				if (p.nameHash == paramHash) return true;
+			}
+			return false;
+		}
+
+		private void SafeSetBool(int hash, bool value)
+		{
+			if (HasParameter(hash))
+			{
+				m_anim.SetBool(hash, value);
+			}
+		}
+
+		private void SafeSetTrigger(int hash)
+		{
+			if (HasParameter(hash))
+			{
+				m_anim.SetTrigger(hash);
+			}
+		}
+
 		private void Start()
 		{
 			m_rb = GetComponent<Rigidbody2D>();
@@ -101,10 +127,7 @@ namespace SwampPreachers.Enemies
 		private void FixedUpdate()
 		{
 			// Sync Stun state with Animator if possible, or just trust our internal boolean
-			if (m_anim != null)
-			{
-				m_anim.SetBool(IsStunnedHash, IsStunned);
-			}
+			SafeSetBool(IsStunnedHash, IsStunned);
 		}
 
 		public void TakeDamage(int damage, DamageSource source = DamageSource.Other)
@@ -124,7 +147,7 @@ namespace SwampPreachers.Enemies
 			}
 			
 			// Trigger Hit Anim (Always play reaction)
-			if (m_anim != null) m_anim.SetTrigger(HitHash);
+			SafeSetTrigger(HitHash);
 
 			if (showHealthBar) UpdateHealthBar();
 
@@ -151,7 +174,7 @@ namespace SwampPreachers.Enemies
 
 		private void Die()
 		{
-			if (m_anim != null) m_anim.SetBool(DieHash, true);
+			SafeSetBool(DieHash, true);
 
 			m_rb.simulated = false;
 			Collider2D col = GetComponent<Collider2D>();

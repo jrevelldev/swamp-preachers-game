@@ -50,48 +50,50 @@ namespace SwampPreachers
 
 		public float HorizontalRaw()
 		{
-			if (activeGamepad == null) return 0f;
+			if (activeGamepad == null) return (gamepadIndex == 0) ? GameInput.HorizontalRaw() : 0f;
 			
 			float val = activeGamepad.leftStick.x.ReadValue();
-			return Mathf.Abs(val) < DEADZONE ? 0f : val;
+			if (Mathf.Abs(val) >= DEADZONE) return val;
+			return (gamepadIndex == 0) ? GameInput.HorizontalRaw() : 0f;
 		}
 
 		public float VerticalRaw()
 		{
-			if (activeGamepad == null) return 0f;
+			if (activeGamepad == null) return (gamepadIndex == 0) ? GameInput.VerticalRaw() : 0f;
 			
 			float val = activeGamepad.leftStick.y.ReadValue();
-			return Mathf.Abs(val) < DEADZONE ? 0f : val;
+			if (Mathf.Abs(val) >= DEADZONE) return val;
+			return (gamepadIndex == 0) ? GameInput.VerticalRaw() : 0f;
 		}
 
 		public bool Jump()
 		{
-			if (activeGamepad == null) return false;
-			return activeGamepad.buttonSouth.wasPressedThisFrame;
+			if (activeGamepad == null) return (gamepadIndex == 0) && GameInput.Jump();
+			return activeGamepad.buttonSouth.wasPressedThisFrame || ((gamepadIndex == 0) && GameInput.Jump());
 		}
 
 		public bool JumpHeld()
 		{
-			if (activeGamepad == null) return false;
-			return activeGamepad.buttonSouth.isPressed;
+			if (activeGamepad == null) return (gamepadIndex == 0) && GameInput.JumpHeld();
+			return activeGamepad.buttonSouth.isPressed || ((gamepadIndex == 0) && GameInput.JumpHeld());
 		}
 
 		public bool Dash()
 		{
-			if (activeGamepad == null) return false;
-			return activeGamepad.rightShoulder.wasPressedThisFrame;
+			if (activeGamepad == null) return (gamepadIndex == 0) && GameInput.Dash();
+			return activeGamepad.rightShoulder.wasPressedThisFrame || ((gamepadIndex == 0) && GameInput.Dash());
 		}
 
 		public bool Attack()
 		{
-			if (activeGamepad == null) return false;
-			return activeGamepad.buttonWest.wasPressedThisFrame;
+			if (activeGamepad == null) return (gamepadIndex == 0) && GameInput.Attack();
+			return activeGamepad.buttonWest.wasPressedThisFrame || ((gamepadIndex == 0) && GameInput.Attack());
 		}
 
 		public bool Crouch()
 		{
-			if (activeGamepad == null) return false;
-			return activeGamepad.buttonEast.isPressed;
+			if (activeGamepad == null) return (gamepadIndex == 0) && GameInput.Crouch();
+			return activeGamepad.buttonEast.isPressed || ((gamepadIndex == 0) && GameInput.Crouch());
 		}
 
 		// Public getter for debugging
